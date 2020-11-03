@@ -1,5 +1,6 @@
 /*
-    TinyBitMapOut.hpp
+    mandelbrot_cpp_viewer
+    A mandelbrot viewer made in C++ using SFML library
     Copyright (C) 2020 Miles MJ Jamon
 
     This library is free software; you can redistribute it and/or
