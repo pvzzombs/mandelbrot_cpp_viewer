@@ -1,0 +1,37 @@
+If you want to modify, change or redistribute the program, please
+consider reading COPYING.LESSER file for better and clearer understanding
+of the process.
+
+The source code is available 
+at https://github.com/pvzzombs/mandelbrot_cpp_viewer.
+
+The source code of mandelbrot_cpp_viewer uses SFML C++ Library.
+
+The SFML C++ Library is available on https://www.sfml-dev.org/ 
+and it's source code is available at https://github.com/SFML/SFML
+and licensed under the zlib/png license.
+
+--------------------------------------------------------------------------
+
+                         mandelbrot_cpp_viewer
+           A mandelbrot viewer made in C++ using SFML library
+                  Copyright (C) 2020 Miles MJ Jamon
+
+--------------------------------------------------------------------------
+
+This program is released under the GNU Lesser General Public License.
+
+mandelbrot_cpp_viewer is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+mandelbrot_cpp_viewer is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with mandelbrot_cpp_viewer; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+USA
