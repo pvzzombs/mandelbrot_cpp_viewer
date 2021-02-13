@@ -8,6 +8,6 @@ build_script:
   - cmake --build . --config Release
   - dir lib\Release
   - cd ../../ && mkdir build && cd build
-  - cmake .. -DSFML_DIR="SFML/build/"
+  - cmake .. -DSFML_DIR="SFML/build/" -DCMAKE_BUILD_TYPE=Release
   - dir
-  - cmake --build .
+  - cmake --build . --config Release
