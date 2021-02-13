@@ -6,7 +6,7 @@ build_script:
   - cd SFML &&  mkdir build && cd build
   - cmake .. -DCMAKE_BUILD_TYPE=Release
   - cmake --build . --config Release
-  - dir lib\Debug
+  - dir lib\Release
   - cd ../../ && mkdir build && cd build
   - cmake .. -DSFML_DIR="SFML/build/"
   - dir
