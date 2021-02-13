@@ -54,29 +54,29 @@ target_link_libraries(Mandelbrot sfml-graphics)
 if(WIN32)
 
 add_custom_command(TARGET Mandelbrot POST_BUILD 
-               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               COMMAND ${CMAKE_COMMAND} -E copy
                "${SFML_DIR}lib/sfml-system-2.dll"              
-               $<TARGET_FILE_DIR:Mandelbrot>/)
+               $<TARGET_FILE_DIR:Mandelbrot>/sfml-system-2.dll)
 
 add_custom_command(TARGET Mandelbrot POST_BUILD 
-               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               COMMAND ${CMAKE_COMMAND} -E copy
                "${SFML_DIR}lib/sfml-window-2.dll"              
-               $<TARGET_FILE_DIR:Mandelbrot>/)
+               $<TARGET_FILE_DIR:Mandelbrot>/sfml-window-2.dll)
 
 add_custom_command(TARGET Mandelbrot POST_BUILD 
-               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               COMMAND ${CMAKE_COMMAND} -E copy
                "${SFML_DIR}lib/sfml-graphics-2.dll"              
-               $<TARGET_FILE_DIR:Mandelbrot>/)
+               $<TARGET_FILE_DIR:Mandelbrot>/sfml-graphics-2.dll)
 
 add_custom_command(TARGET Mandelbrot POST_BUILD 
-               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               COMMAND ${CMAKE_COMMAND} -E copy
                "${CMAKE_CURRENT_SOURCE_DIR}verdana.ttf"              
-               $<TARGET_FILE_DIR:Mandelbrot>/)
+               $<TARGET_FILE_DIR:Mandelbrot>/verdana.ttf)
 
 add_custom_command(TARGET Mandelbrot POST_BUILD 
-               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               COMMAND ${CMAKE_COMMAND} -E copy
                "${CMAKE_CURRENT_SOURCE_DIR}config.txt"              
-               $<TARGET_FILE_DIR:Mandelbrot>/)
+               $<TARGET_FILE_DIR:Mandelbrot>/config.txt)
 
 endif(WIN32)
 # Install target
