@@ -4,8 +4,8 @@ init:
 build_script:
   - git clone https://github.com/SFML/SFML.git 
   - cd SFML &&  mkdir build && cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - cmake .. -DCMAKE_BUILD_TYPE=Release -G "MinGW Makefiles"
   - cmake --build .
   - cd ../../ && mkdir build && cd build
-  - cmake .. -DSFML_DIR="SFML/build/"
+  - cmake .. -DSFML_DIR="SFML/build/" -G "MinGW Makefiles"
   - cmake --build .
