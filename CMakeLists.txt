@@ -17,6 +17,19 @@ if(NOT CMAKE_BUILD_TYPE)
     )
 endif()
 
+#detetc windows
+if(WIN32)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MINGW")
+  #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+  MESSAGE("-- GNU Toolchain detected")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  set(MSVC_PATCH WIN32)
+  MESSAGE("-- MSVC Toolchain detected")
+  #set ( CXX_STANDARD 14 )
+  #set ( CXX_STANDARD 14 ) 
+endif()
+endif(WIN32)
+
 # Generate config.h
 #configure_file(config.h.in config.h)
 
@@ -27,7 +40,7 @@ find_package(SFML 2.5
   )
 
 # Compile executable
-add_executable(Mandelbrot main.cpp TinyBitmapOut.cpp)
+add_executable(Mandelbrot ${MSVC_PATCH}  main.cpp TinyBitmapOut.cpp)
 
 # Set include directory search paths
 target_include_directories(Mandelbrot 
