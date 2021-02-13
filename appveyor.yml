@@ -1,0 +1,11 @@
+init:
+  - g++ --version
+
+build_script:
+  - git clone https://github.com/SFML/SFML.git 
+  - cd SFML &&  mkdir build && cd build
+  - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - cmake --build .
+  - cd ../../ && mkdir build && cd build
+  - cmake .. -DSFML_DIR="SFML/build/"
+  - cmake --build .
