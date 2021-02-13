@@ -51,6 +51,9 @@ target_include_directories(Mandelbrot
 # Link executable to required SFML libraries
 target_link_libraries(Mandelbrot sfml-graphics)
 
+if(WIN32)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MINGW")
+
 add_custom_command(TARGET Mandelbrot POST_BUILD 
                COMMAND ${CMAKE_COMMAND} -E copy_if_different
                "${SFML_DIR}/lib/sfml-system-2.dll"              
@@ -60,7 +63,7 @@ add_custom_command(TARGET Mandelbrot POST_BUILD
                COMMAND ${CMAKE_COMMAND} -E copy_if_different
                "${SFML_DIR}/lib/sfml-window-2.dll"              
                $<TARGET_FILE_DIR:Mandelbrot>)
-
+ 
 add_custom_command(TARGET Mandelbrot POST_BUILD 
                COMMAND ${CMAKE_COMMAND} -E copy_if_different
                "${SFML_DIR}/lib/sfml-graphics-2.dll"              
@@ -75,7 +78,8 @@ add_custom_command(TARGET Mandelbrot POST_BUILD
                COMMAND ${CMAKE_COMMAND} -E copy_if_different
                "${CMAKE_CURRENT_SOURCE_DIR}/config.txt"              
                $<TARGET_FILE_DIR:Mandelbrot>)
-
+endif()
+endif(WIN32)
 # Install target
 #install(TARGETS Mandelbrot DESTINATION bin)
 
