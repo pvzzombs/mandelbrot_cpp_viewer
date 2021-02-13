@@ -1,5 +1,5 @@
 init:
-  - g++ --version
+  - cmake --version
 
 build_script:
   - git clone https://github.com/SFML/SFML.git 
