@@ -395,7 +395,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
   text.setString("...");
   text.setFillColor(sf::Color::White);
   text.setOutlineColor(sf::Color::Black);
-  text.setOutlineThickness(1.0 f);
+  text.setOutlineThickness(1.0f);
   text.setPosition(1, 1);
   text.setCharacterSize(16);
 
