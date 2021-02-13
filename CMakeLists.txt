@@ -52,13 +52,13 @@ target_include_directories(Mandelbrot
 target_link_libraries(Mandelbrot sfml-graphics)
 
 if(WIN32)
-
-configure_file("${SFML_DIR}lib/sfml-system-2.dll" $<TARGET_FILE_DIR:Mandelbrot>/sfml-system-2.dll COPYONLY)
-configure_file("${SFML_DIR}lib/sfml-window-2.dll" $<TARGET_FILE_DIR:Mandelbrot>/sfml-window-2.dll COPYONLY)
-configure_file("${SFML_DIR}lib/sfml-graphics-2.dll" $<TARGET_FILE_DIR:Mandelbrot>/sfml-graphics-2.dll COPYONLY)
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+configure_file("${SFML_DIR}lib/Debug/sfml-system-2.dll" $<TARGET_FILE_DIR:Mandelbrot>/sfml-system-2.dll COPYONLY)
+configure_file("${SFML_DIR}lib/Debug/sfml-window-2.dll" $<TARGET_FILE_DIR:Mandelbrot>/sfml-window-2.dll COPYONLY)
+configure_file("${SFML_DIR}lib/Debug/sfml-graphics-2.dll" $<TARGET_FILE_DIR:Mandelbrot>/sfml-graphics-2.dll COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}verdana.ttf" $<TARGET_FILE_DIR:Mandelbrot>/verdana.ttf COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}config.txt" $<TARGET_FILE_DIR:Mandelbrot>/config.txt COPYONLY)
-
+endif()
 endif(WIN32)
 # Install target
 #install(TARGETS Mandelbrot DESTINATION bin)
