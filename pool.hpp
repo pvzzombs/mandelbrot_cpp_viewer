@@ -53,11 +53,8 @@ private:
     for(i=0; i<num; i++){
       pool.emplace_back(std::thread(std::bind(&thread_pool::loop_function, &(*this) )));
     }
-
   }
 public:
-
-
   thread_pool(){
     init();
   }
@@ -129,8 +126,8 @@ public:
       terminate_job_flag = false;
     }
 
-    while(Queue.size())
+    while(Queue.size()){
       Queue.pop();
-
+    }
   }
 };

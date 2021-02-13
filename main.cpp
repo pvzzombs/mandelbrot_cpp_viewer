@@ -54,7 +54,6 @@ class hsv {
     } else if (1 < k && 1 < (4 - k)) {
       lowest = 1;
     } else {
-
     }
 
     double max;
@@ -97,13 +96,11 @@ unsigned int rt_array_current = 0;
  */
 class resource_t {
   public:
-
     unsigned int index = 0;
 
   /*                   constructor                    */
   /* define and initialize*/
   resource_t() {
-
   }
 
   resource_t(unsigned int width, unsigned int height) {
@@ -126,7 +123,6 @@ template < typename T_const_init >
     T_const_init self;
     public:
       const_init(): is_self_empty(true) {
-
       }
     const_init(T_const_init some_data) {
       if (is_self_empty && std::is_copy_assignable < T_const_init > ::value && std::is_copy_assignable < T_const_init > ::value) {
@@ -159,7 +155,6 @@ template < typename T_const_init >
     T_const_init * return_value_pointer() {
       return &self;
     }
-
   };
 
 const_init < unsigned int > MAX_DRAWER_THREADS;
@@ -314,7 +309,6 @@ void stopRenderingThreads() {
   theThreadsDone = 0;
   isThreadsWorking = false;
   stopThreads = false;
-
 }
 
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow) {
@@ -772,7 +766,6 @@ void draw(mdbl_data data) {
 
   theThreadsDone += 1;
   std::cout << "Done thread: " << data.i << "\n";
-  //WINDOW->setActive(false);
 }
 
 void prepare_canvas(int numberOfThreads) {
@@ -825,16 +818,9 @@ void thread_split(int numberOfThreads) {
     //    thread.launch();
     ///thread.wait();
   }
-
   isThreadsWorking = true;
 
   std::cout << "All threads launched\n";
-
-  //  for(i = 0; i < numberOfThreads; i++){
-  //    ///list_of_threads[i]->launch();
-  //    list_of_threads[i].join();
-  //    std::cout << "Joining thread: " << i << "\n";
-  //  }
 }
 
 void renderingThread(sf::RenderWindow * window) {
