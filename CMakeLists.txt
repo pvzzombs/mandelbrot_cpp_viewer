@@ -1,0 +1,68 @@
+cmake_minimum_required(VERSION 3.1)
+
+# Set project name and version
+project(Mandelbrot)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_EXTENSIONS OFF)
+#set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+
+# Enable debug symbols by default
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release 
+    CACHE STRING 
+      "Choose the type of build (Debug or Release)" 
+      FORCE
+    )
+endif()
+
+# Generate config.h
+#configure_file(config.h.in config.h)
+
+# Find SFML shared libraries
+find_package(SFML 2.5 
+  COMPONENTS 
+    system window graphics network audio REQUIRED
+  )
+
+# Compile executable
+add_executable(Mandelbrot main.cpp TinyBitmapOut.cpp)
+
+# Set include directory search paths
+target_include_directories(Mandelbrot 
+  PRIVATE
+  "${PROJECT_BINARY_DIR}"
+  )
+
+# Link executable to required SFML libraries
+target_link_libraries(Mandelbrot sfml-graphics)
+
+add_custom_command(TARGET Mandelbrot POST_BUILD 
+               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               "${SFML_DIR}/lib/sfml-system-2.dll"              
+               $<TARGET_FILE_DIR:Mandelbrot>)
+
+add_custom_command(TARGET Mandelbrot POST_BUILD 
+               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               "${SFML_DIR}/lib/sfml-window-2.dll"              
+               $<TARGET_FILE_DIR:Mandelbrot>)
+
+add_custom_command(TARGET Mandelbrot POST_BUILD 
+               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               "${SFML_DIR}/lib/sfml-graphics-2.dll"              
+               $<TARGET_FILE_DIR:Mandelbrot>)
+
+add_custom_command(TARGET Mandelbrot POST_BUILD 
+               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               "${CMAKE_CURRENT_SOURCE_DIR}/verdana.ttf"              
+               $<TARGET_FILE_DIR:Mandelbrot>)
+
+add_custom_command(TARGET Mandelbrot POST_BUILD 
+               COMMAND ${CMAKE_COMMAND} -E copy_if_different
+               "${CMAKE_CURRENT_SOURCE_DIR}/config.txt"              
+               $<TARGET_FILE_DIR:Mandelbrot>)
+
+# Install target
+#install(TARGETS Mandelbrot DESTINATION bin)
+
