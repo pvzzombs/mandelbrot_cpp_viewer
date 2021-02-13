@@ -3,8 +3,8 @@ init:
 
 build_script:
   - git clone https://github.com/SFML/SFML.git 
-  - cd SFML &&  mkdir build && cd build -G "NMake Makefiles"
-  - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - cd SFML &&  mkdir build && cd build
+  - cmake .. -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles"
   - cmake --build .
   - cd ../../ && mkdir build && cd build
   - cmake .. -DSFML_DIR="SFML/build/" -G "NMake Makefiles"
