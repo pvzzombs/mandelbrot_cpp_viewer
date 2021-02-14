@@ -14,5 +14,5 @@ build_script:
   - cd ../../ && mkdir build && cd build
   - cmake .. -DSFML_DIR="SFML/build/" -DCMAKE_BUILD_TYPE=Release
   - cmake --build . --config Release
-  - dir Release
-  - 7z a mandelbrot_cpp_viewer.7z Release/
+  - dir Release && cd ..
+  - 7z a mandelbrot_cpp_viewer.7z build/Release/
