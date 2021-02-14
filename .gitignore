@@ -1,0 +1,15 @@
+#Ignore Build Commands
+build/
+build/*.*
+
+#Ignore binary folder and files
+bin/
+bin/*.*
+
+#sawp files from vim
+*.swp
+
+#exe files and object files
+*.exe
+*.o
+*.obj
