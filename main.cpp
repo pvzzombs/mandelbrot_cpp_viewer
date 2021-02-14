@@ -118,9 +118,9 @@ class resource_t {
  */
 template < typename T_const_init >
   class const_init {
-    private:
-      bool is_self_empty = true;
+    bool is_self_empty = true;
     T_const_init self;
+
     public:
       const_init(): is_self_empty(true) {
       }
@@ -586,7 +586,6 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
           if (isThreadsWorking.load()) {
             stopRenderingThreads();
           }
-
           zoomy = 100;
           zoom = floor(zoomy * (cWidth / cHeight));
           x = -2.0;
@@ -633,16 +632,13 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
           ///bmpOutput.flip_data_horizontal();
           bmpOutput.save_data();
         }
-
       }
     }
-
   }
   return 0;
 }
 
 rgb optimizedSmoothColor(double mu) {
-
   int clr1 = (int) mu;
   double t2 = mu - clr1;
   double t1 = 1 - t2;
@@ -710,14 +706,12 @@ void draw(mdbl_data data) {
 
   for (cx_thread = data.cx_start_thread; cx_thread < data.cx_end_thread; cx_thread++) {
     for (cy_thread = 0; cy_thread < cHeight_thread; cy_thread++) {
-
       //return fast if it needs to stop
       /*if(stopThreads.load()){
         std::cout << "Shutting down thread " << data.i << "\n";
         theThreadsDone += 1;
         return;
       }*/
-
       ++ticks;
 
       iterations_thread = 0;
@@ -845,9 +839,7 @@ void renderingThread(sf::RenderWindow * window) {
     window -> display();
 
     if (theThreadsDone.load() == max_cpu_drawer) {
-
       stopRenderingThreads();
-
     }
   }
   std::cout << "Exiting Rendering Thread..\n";

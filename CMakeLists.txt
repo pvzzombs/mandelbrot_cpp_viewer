@@ -3,11 +3,6 @@ cmake_minimum_required(VERSION 3.1)
 # Set project name and version
 project(Mandelbrot)
 
-# Set C++ standard
-set(CMAKE_CXX_STANDARD 11)
-#set(CMAKE_CXX_EXTENSIONS OFF)
-#set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-
 # Force Release Mode
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release 
@@ -17,10 +12,10 @@ if(NOT CMAKE_BUILD_TYPE)
     )
 endif()
 
-# Detect windows
+# Set CXX_STANDARD
 if(WIN32)
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MINGW")
-    #set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
     MESSAGE("-- GNU Toolchain detected")
   elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(MSVC_PATCH WIN32)
@@ -37,7 +32,6 @@ endif(WIN32)
 # Set SFML_DIR search path, you can set this option 
 # configuring cmake
 if(WIN32)
-  MESSAGE("-- AM I")
   set(SFML_DIR "SFML\\build\\" CACHE FILE_PATH "SFML\\build\\" FORCE)
 else()
   set(SFML_DIR "SFML/build/" CACHE FILE_PATH "SFML/build/" FORCE)

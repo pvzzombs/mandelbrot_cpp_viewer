@@ -54,6 +54,7 @@ private:
       pool.emplace_back(std::thread(std::bind(&thread_pool::loop_function, &(*this) )));
     }
   }
+
 public:
   thread_pool(){
     init();
