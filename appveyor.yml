@@ -11,11 +11,11 @@ deploy:
   auth_token:
     secure: FeBOyWj8jfeUe7rzAM0ffdKbpnVQgLb5BxB6yrqWOzC/UoBi1JDbUdWxyQnjK1SA
   artifact: mandelbrot_cpp_viewer.7z
-  draft: false
+  draft: true
   prerelease: false
-  skip_tags: true
   on:
     branch: main
+    APPVEYOR_REPO_TAG: true
 
 init:
   - cmake --version
