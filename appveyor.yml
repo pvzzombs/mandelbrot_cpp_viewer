@@ -9,13 +9,12 @@ deploy:
   description: 'Release via Appveyor on push'
   provider: GitHub
   auth_token:
-    secure: 7a83ec32d2a936c67a7e9059ab5b0542d901ac4a
+    secure: FeBOyWj8jfeUe7rzAM0ffdKbpnVQgLb5BxB6yrqWOzC/UoBi1JDbUdWxyQnjK1SA
   artifact: mandelbrot_cpp_viewer.7z
   draft: false
   prerelease: false
   on:
     branch: main
-    APPVEYOR_REPO_TAG: true
 
 init:
   - cmake --version
