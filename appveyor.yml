@@ -5,7 +5,7 @@ artifacts:
     name: mandelbrot_cpp_viewer.7z
 
 deploy:
-  #release: mandelbrot_cpp_viewer-v$(APPVEYOR_BUILD_VERSION)
+  release: mandelbrot_cpp_viewer-v$(APPVEYOR_BUILD_VERSION)
   tag: $(APPVEYOR_REPO_TAG_NAME)
   description: 'Release via Appveyor on push'
   provider: GitHub
