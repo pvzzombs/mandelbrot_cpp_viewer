@@ -13,6 +13,7 @@ deploy:
   artifact: mandelbrot_cpp_viewer.7z
   draft: false
   prerelease: false
+  skip_tags: true
   on:
     branch: main
 
