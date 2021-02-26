@@ -3,14 +3,13 @@ cmake_minimum_required(VERSION 3.1)
 # Set project name and version
 project(Mandelbrot)
 
-# Force Release Mode
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release 
-    CACHE STRING 
-      "Choose the type of build (Debug or Release)" 
-      FORCE
-    )
-endif()
+
+MESSAGE("-- Release Mode")
+set(CMAKE_BUILD_TYPE Release 
+  CACHE STRING 
+    "Choose the type of build (Debug or Release)" 
+    FORCE
+)
 
 # Set CXX_STANDARD
 if(WIN32)
@@ -58,11 +57,19 @@ target_link_libraries(Mandelbrot sfml-graphics)
 
 if(WIN32)
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    configure_file("${SFML_DIR}\\lib\\Release\\sfml-system-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\Release\\sfml-system-2.dll" COPYONLY)
-    configure_file("${SFML_DIR}\\lib\\Release\\sfml-window-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\Release\\sfml-window-2.dll" COPYONLY)
-    configure_file("${SFML_DIR}\\lib\\Release\\sfml-graphics-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\Release\\sfml-graphics-2.dll" COPYONLY)
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}\\verdana.ttf" "${CMAKE_CURRENT_BINARY_DIR}\\Release\\verdana.ttf" COPYONLY)
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}\\config.txt" "${CMAKE_CURRENT_BINARY_DIR}\\Release\\config.txt" COPYONLY)
+    if("${CMAKE_GENERATOR}" STREQUAL "NMake Makefiles")
+      configure_file("${SFML_DIR}\\lib\\sfml-system-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\sfml-system-2.dll" COPYONLY)
+      configure_file("${SFML_DIR}\\lib\\sfml-window-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\sfml-window-2.dll" COPYONLY)
+      configure_file("${SFML_DIR}\\lib\\sfml-graphics-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\sfml-graphics-2.dll" COPYONLY)
+      configure_file("${CMAKE_CURRENT_SOURCE_DIR}\\verdana.ttf" "${CMAKE_CURRENT_BINARY_DIR}\\verdana.ttf" COPYONLY)
+      configure_file("${CMAKE_CURRENT_SOURCE_DIR}\\config.txt" "${CMAKE_CURRENT_BINARY_DIR}\\config.txt" COPYONLY)
+    else()
+      configure_file("${SFML_DIR}\\lib\\Release\\sfml-system-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\Release\\sfml-system-2.dll" COPYONLY)
+      configure_file("${SFML_DIR}\\lib\\Release\\sfml-window-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\Release\\sfml-window-2.dll" COPYONLY)
+      configure_file("${SFML_DIR}\\lib\\Release\\sfml-graphics-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\Release\\sfml-graphics-2.dll" COPYONLY)
+      configure_file("${CMAKE_CURRENT_SOURCE_DIR}\\verdana.ttf" "${CMAKE_CURRENT_BINARY_DIR}\\Release\\verdana.ttf" COPYONLY)
+      configure_file("${CMAKE_CURRENT_SOURCE_DIR}\\config.txt" "${CMAKE_CURRENT_BINARY_DIR}\\Release\\config.txt" COPYONLY)
+    endif()
   elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MINGW")
     configure_file("${SFML_DIR}\\lib\\sfml-system-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\sfml-system-2.dll" COPYONLY)
     configure_file("${SFML_DIR}\\lib\\sfml-window-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\sfml-window-2.dll" COPYONLY)
