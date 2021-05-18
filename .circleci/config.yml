@@ -18,6 +18,9 @@ jobs:
       - run:
           name: Install CMAKE
           command: 'apt-get update && sudo apt-get install -y cmake'
+      - run:
+          name: Install Xorg
+          command: 'apt-get update && sudo apt-get install -y xorg'
 #      - run:
 #          name: Install Curl
 #          command: 'apt-get update && sudo apt-get install -y curl'
