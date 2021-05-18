@@ -34,23 +34,14 @@ jobs:
           name: Clone SFML Repo
           command: 'git clone https://github.com/SFML/SFML.git'
       - run:
-          name: Build SFML Folder
-          command: 'cd SFML &&  mkdir build && cd build'
+          name: Configure and Build SFML Folder
+          command: 'cd SFML &&  mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && cmake --build . --config Release'
       - run:
-          name: Configure SFML
-          command: 'cmake .. -DCMAKE_BUILD_TYPE=Release'
+          name: Build mandelbrot_cpp_viewer Folder
+          command: 'mkdir build'
       - run:
-          name: Build SFML
-          command: 'cmake --build . --config Release'
-      - run:
-          name: Build mandelbrot_cpp_viwer Folder
-          command: 'cd ../../ && mkdir build && cd build'
-      - run:
-          name: Configure mandelbrot_cpp_viewer
-          command: 'cmake .. -DSFML_DIR="SFML/build/" -DCMAKE_BUILD_TYPE=Release'
-      - run:
-          name: Build maandelbrot_cpp_viewer
-          command: 'cmake --build . --config Release'
+          name: Configure and Build mandelbrot_cpp_viewer
+          command: 'cd build && cmake .. -DSFML_DIR="SFML/build/" -DCMAKE_BUILD_TYPE=Release && cmake --build . --config Release'
 #      - run:
 #          name: Creating Binary Files and Executing Build Wrapper
 #          command: './build_wrapper_executable_folder/build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build_wrapper_output_directory cmake --build build'
