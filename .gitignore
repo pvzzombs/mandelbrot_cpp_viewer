@@ -16,3 +16,9 @@ bin/*.*
 
 #ignore bak files
 *.bak
+
+#Ignore SFML Folder
+SFML/
+sfml/
+SFML/*.*
+sfml/*.*
