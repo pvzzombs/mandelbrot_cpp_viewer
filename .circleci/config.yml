@@ -35,7 +35,7 @@ jobs:
           command: 'apt-get update && sudo apt-get install -y libopenal-dev'
       - run:
           name: Install Vorbis
-          command: 'apt-get update && sudo apt-get install -y vorbis-tools'
+          command: 'apt-get update && sudo apt-get install -y libvorbis-dev'
       - run:
           name: Install Freetype
           command: 'apt-get update && sudo apt-get install -y libfreetype6-dev'
