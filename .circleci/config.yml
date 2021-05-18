@@ -25,6 +25,9 @@ jobs:
           name: Install X11Lib
           command: 'apt-get update && sudo apt-get install -y libx11-dev'
       - run:
+          name: Install Xrandr
+          command: 'apt-get update && sudo apt-get install -y libxrandr-dev'
+      - run:
           name: Install GlutLib
           command: 'apt-get update && sudo apt-get install -y freeglut3-dev'
       - run:
