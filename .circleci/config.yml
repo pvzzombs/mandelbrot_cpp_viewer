@@ -20,7 +20,7 @@ jobs:
           command: 'apt-get update && sudo apt-get install -y cmake'
       - run:
           name: Install Xorg
-          command: 'apt-get update && sudo apt-get install -y xorg'
+          command: 'apt-get update; 0 | sudo apt-get install -y xorg'
 #      - run:
 #          name: Install Curl
 #          command: 'apt-get update && sudo apt-get install -y curl'
