@@ -37,7 +37,7 @@ jobs:
           name: CMAKE building
           command: 'cmake --build build'
           
-      - sonarcloud/scan
+#      - sonarcloud/scan
 
 #orbs:
 #  sonarcloud: sonarsource/sonarcloud@1.0.1
