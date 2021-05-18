@@ -907,4 +907,3 @@ void zoomOut() {
   panX = pan * floor(cWidth / 4);
   panY = pan * floor(cHeight / 4);
 }
-}
