@@ -33,6 +33,15 @@ jobs:
       - run:
           name: Install LibopenAL
           command: 'apt-get update && sudo apt-get install -y libopenal-dev'
+      - run:
+          name: Install Vorbis
+          command: 'apt-get update && sudo apt-get install -y vorbis-tools'
+      - run:
+          name: Install Freetype
+          command: 'apt-get update && sudo apt-get install -y libfreetype6-dev'
+      - run:
+          name: Install Flac
+          command: 'apt-get update && sudo apt-get install -y flac'
 #      - run:
 #          name: Install Curl
 #          command: 'apt-get update && sudo apt-get install -y curl'
