@@ -13,3 +13,6 @@ bin/*.*
 *.exe
 *.o
 *.obj
+
+#ignore bak files
+*.bak

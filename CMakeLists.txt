@@ -52,8 +52,12 @@ target_include_directories(Mandelbrot
   "${PROJECT_BINARY_DIR}"
   )
 
+if(WIN32)
 # Link executable to required SFML libraries
 target_link_libraries(Mandelbrot sfml-graphics)
+else()
+target_link_libraries(Mandelbrot pthread sfml-graphics sfml-window sfml-system)
+endif(WIN32)
 
 if(WIN32)
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")

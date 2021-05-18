@@ -19,7 +19,9 @@
     USA
 */
 
+#ifdef _WIN32
 #include <Windows.h>
+#endif
 #include <iostream>
 #include "TinyBitmapOut.hpp"
 #include "pool.hpp"
@@ -310,8 +312,11 @@ void stopRenderingThreads() {
   isThreadsWorking = false;
   stopThreads = false;
 }
-
+#ifdef _WIN32
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow) {
+#else
+int main(int argc, char * argv[]){
+#endif
   //get the number of CPU CORES
   unsigned int determinator_of_cpu_cores = std::thread::hardware_concurrency();
   MAX_DRAWER_THREADS = (determinator_of_cpu_cores < 1) ? 1 : determinator_of_cpu_cores;
@@ -901,4 +906,5 @@ void zoomOut() {
   double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
   panX = pan * floor(cWidth / 4);
   panY = pan * floor(cHeight / 4);
+}
 }
