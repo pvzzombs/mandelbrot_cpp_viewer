@@ -24,6 +24,9 @@ jobs:
       - run:
           name: Install X11Lib
           command: 'apt-get update && sudo apt-get install -y libx11-dev'
+      - run:
+          name: Install GlutLib
+          command: 'apt-get update && sudo apt-get install -y freeglut3-dev'
 #      - run:
 #          name: Install Curl
 #          command: 'apt-get update && sudo apt-get install -y curl'
