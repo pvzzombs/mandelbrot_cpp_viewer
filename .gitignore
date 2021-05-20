@@ -17,6 +17,10 @@ bin/*.*
 #ignore bak files
 *.bak
 
+#ignore .vscode folder
+.vscode/
+.vscode/*.*
+
 #Ignore SFML Folder
 SFML/
 sfml/
