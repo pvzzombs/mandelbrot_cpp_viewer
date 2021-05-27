@@ -1,5 +1,5 @@
 If you want to modify, change or redistribute the program, please
-consider reading COPYING.LESSER file for better and clearer understanding
+consider reading LICENSE file for better and clearer understanding
 of the process.
 
 The source code is available 
@@ -15,7 +15,7 @@ and licensed under the zlib/png license.
 
                          mandelbrot_cpp_viewer
            A mandelbrot viewer made in C++ using SFML library
-                  Copyright (C) 2020 Miles MJ Jamon
+                  Copyright (C) 2021 Miles MJ Jamon
 
 --------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 /*
     main.cpp - Main source file
     Part of mandelbrot viewer made in C++ using SFML library
-    Copyright (C) 2020 Miles MJ Jamon
+    Copyright (C) 2021 Miles MJ Jamon
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -19,9 +19,10 @@
     USA
 */
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #include <Windows.h>
 #endif
+
 #include <iostream>
 #include "TinyBitmapOut.hpp"
 #include "pool.hpp"
@@ -35,6 +36,10 @@
 #include <SFML/System.hpp>
 #include <thread>
 #include <atomic>
+
+#if defined(unix) || defined(__unix) || defined(__unix__)
+#include <X11/Xlib.h>
+#endif
 
 /**
  * An implementation of Hue, Saturation and Value color class
@@ -321,6 +326,7 @@ int main(int argc, char * argv[]){
   unsigned int determinator_of_cpu_cores = std::thread::hardware_concurrency();
   MAX_DRAWER_THREADS = (determinator_of_cpu_cores < 1) ? 1 : determinator_of_cpu_cores;
 
+  XInitThreads();
   split_canvas = new resource_t[MAX_DRAWER_THREADS.return_value()];
 
   //lets check if the file config.txt is open
@@ -403,7 +409,7 @@ int main(int argc, char * argv[]){
   ZOOMBOX = & zoomBox;
 
   //create context
-  sf::Context contxt;
+  //sf::Context contxt;
 
   std::thread thread_drawer(renderingThread, & window);
 

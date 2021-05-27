@@ -1,7 +1,7 @@
 /*
     TinyBitmapOut.cpp - Source file for Bitmap Manipulation
     Part of mandelbrot viewer made in C++ using SFML library
-    Copyright (C) 2020 Miles MJ Jamon
+    Copyright (C) 2021 Miles MJ Jamon
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public

@@ -45,9 +45,14 @@ find_package(SFML 2.5
 
 # Compile executable
 add_executable(Mandelbrot ${MSVC_PATCH}  main.cpp TinyBitmapOut.cpp)
+add_executable(Test ${MSVC_PATCH} test/test.cpp)
 
 # Set include directory search paths
 target_include_directories(Mandelbrot 
+  PRIVATE
+  "${PROJECT_BINARY_DIR}"
+  )
+target_include_directories(Test 
   PRIVATE
   "${PROJECT_BINARY_DIR}"
   )
@@ -55,8 +60,10 @@ target_include_directories(Mandelbrot
 if(WIN32)
 # Link executable to required SFML libraries
 target_link_libraries(Mandelbrot sfml-graphics)
+target_link_libraries(Test sfml-graphics)
 else()
-target_link_libraries(Mandelbrot pthread sfml-graphics sfml-window sfml-system)
+target_link_libraries(Mandelbrot X11 pthread sfml-graphics sfml-window sfml-system)
+target_link_libraries(Test X11 pthread sfml-graphics sfml-window sfml-system)
 endif(WIN32)
 
 if(WIN32)
