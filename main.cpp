@@ -317,7 +317,7 @@ void stopRenderingThreads() {
   isThreadsWorking = false;
   stopThreads = false;
 }
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow) {
 #else
 int main(int argc, char * argv[]){
@@ -326,7 +326,11 @@ int main(int argc, char * argv[]){
   unsigned int determinator_of_cpu_cores = std::thread::hardware_concurrency();
   MAX_DRAWER_THREADS = (determinator_of_cpu_cores < 1) ? 1 : determinator_of_cpu_cores;
 
+  //Init XThreads (Linux)
+#if defined(unix) || defined(__unix) || defined(__unix__)
   XInitThreads();
+#endif
+
   split_canvas = new resource_t[MAX_DRAWER_THREADS.return_value()];
 
   //lets check if the file config.txt is open
