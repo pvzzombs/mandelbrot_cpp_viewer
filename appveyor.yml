@@ -32,3 +32,4 @@ build_script:
   - cmake --build . --config Release
   - dir Release && cd ..
   - 7z a mandelbrot_cpp_viewer.7z build/Release/
+  - run.bat
