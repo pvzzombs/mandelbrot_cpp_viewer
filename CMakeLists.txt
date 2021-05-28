@@ -14,15 +14,20 @@ set(CMAKE_BUILD_TYPE Release
 # Set CXX_STANDARD
 if(WIN32)
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MINGW")
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     MESSAGE("-- GNU Toolchain detected")
   elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(MSVC_PATCH WIN32)
     MESSAGE("-- MSVC Toolchain detected")
-    set ( CXX_STANDARD 14 )
+    set ( CXX_STANDARD 11 )
   endif()
 else()
-  set(CXX_STANDARD 14)
+  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    MESSAGE("-- GNU Toolchain detected")
+  else()
+    set(CXX_STANDARD 11)
+  endif()
 endif(WIN32)
 
 # Generate config.h
@@ -43,6 +48,12 @@ find_package(SFML 2.5
     system window graphics network audio REQUIRED
   )
 
+# Only for LINK_MANDELBROT_STATIC
+if(LINK_MANDELBROT_STATIC)
+  include_directories("SFML/include")
+  link_directories("${SFML_DIR}/lib")
+endif(LINK_MANDELBROT_STATIC)
+
 # Compile executable
 add_executable(Mandelbrot ${MSVC_PATCH}  main.cpp TinyBitmapOut.cpp)
 add_executable(Test ${MSVC_PATCH} test/test.cpp)
@@ -58,12 +69,19 @@ target_include_directories(Test
   )
 
 if(WIN32)
-# Link executable to required SFML libraries
-target_link_libraries(Mandelbrot sfml-graphics)
-target_link_libraries(Test sfml-graphics)
+  # Link executable to required SFML libraries
+  target_link_libraries(Mandelbrot sfml-graphics)
+  target_link_libraries(Test sfml-graphics)
 else()
-target_link_libraries(Mandelbrot X11 pthread sfml-graphics sfml-window sfml-system)
-target_link_libraries(Test X11 pthread sfml-graphics sfml-window sfml-system)
+  if(LINK_MANDELBROT_STATIC)
+    MESSAGE("-- Using static SFML libraries")
+    target_link_libraries(Mandelbrot freetype GL udev sfml-graphics-s sfml-window-s sfml-system-s X11 pthread)
+    target_link_libraries(Test freetype GL udev sfml-graphics-s sfml-window-s sfml-system-s X11 pthread)
+  else()
+    MESSAGE("-- Using dynamic SFML libraries")
+    target_link_libraries(Mandelbrot X11 pthread sfml-graphics sfml-window sfml-system)
+    target_link_libraries(Test X11 pthread sfml-graphics sfml-window sfml-system)
+  endif(LINK_MANDELBROT_STATIC)
 endif(WIN32)
 
 if(WIN32)
@@ -87,6 +105,11 @@ if(WIN32)
     configure_file("${SFML_DIR}\\lib\\sfml-graphics-2.dll" "${CMAKE_CURRENT_BINARY_DIR}\\sfml-graphics-2.dll" COPYONLY)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}\\verdana.ttf" "${CMAKE_CURRENT_BINARY_DIR}\\verdana.ttf" COPYONLY)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}\\config.txt" "${CMAKE_CURRENT_BINARY_DIR}\\config.txt" COPYONLY)
+  endif()
+else()
+  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/verdana.ttf" "${CMAKE_CURRENT_BINARY_DIR}\\verdana.ttf" COPYONLY)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.txt" "${CMAKE_CURRENT_BINARY_DIR}\\config.txt" COPYONLY)
   endif()
 endif(WIN32)
 # Install target
