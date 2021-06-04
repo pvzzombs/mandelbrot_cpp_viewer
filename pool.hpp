@@ -19,6 +19,9 @@
     USA
 */
 
+#ifndef POOL_LOCK
+#define POOL_LOCK
+
 #include <iostream>
 #include <thread>
 #include <mutex>
@@ -92,7 +95,7 @@ public:
     }
   }
 
-  void add_job(F new_job, T arg){
+  void add_job(F new_job, const T & arg){
     {
       std::unique_lock<std::mutex> lock(queue_mutex);
       queue_data<F, T> temp;
@@ -132,3 +135,5 @@ public:
     }
   }
 };
+
+#endif

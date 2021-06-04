@@ -24,7 +24,7 @@
 #include <fstream>
 #include <iostream>
 
-class rgb final{
+class rgb {
 public:
     int r, g, b, a;
 ////////////////////////////////////////////////////////////
@@ -55,8 +55,7 @@ public:
     rgb(int w, int q, int c, int d);
 };
 
-class TinyBitmapOut final
-{
+class TinyBitmapOut {
     int* data;
     bool is_data;
     int area;
