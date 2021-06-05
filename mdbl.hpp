@@ -42,6 +42,7 @@
 #include <X11/Xlib.h>
 #endif
 
+// determines the number of cpu cores to be used for drawing
 const_init < unsigned int > MAX_DRAWER_THREADS;
 //#define MAX_THREADS 4
 
@@ -79,6 +80,8 @@ double rsquare = 0, isquare = 0, zsquare = 0;
 /// the constant log of 2 (base 10?)
 double mlog2 = log((double) 2);
 
+// mdbl_data is used to represent the 
+// details inside the mandelbrot draw function
 struct mdbl_data {
   int i;
   float cx_start_thread, cx_end_thread;
@@ -140,60 +143,37 @@ rgb palleteOptimized[50] = {
   rgb(20, 15, 0)
 };
 
-/// The functions and utilities
-rgb optimizedSmoothColor(double mu);
-rgb smoothColor(int iterations_t, int maxIterations_t, double i_t, double j_t,
-  double rsquare_t, double isquare_t, double zsquare_t, double sx_t, double sy_t);
-
-void draw(const mdbl_data&);
-void prepare_canvas(int);
-void thread_split(int);
-void renderingThread(sf::RenderWindow * window);
-void refresh();
-void zoomIn();
-void zoomOut();
-
 sf::Font font;
 std::stringstream ss;
 
 sf::RectangleShape * ZOOMBOX;
 sf::Text * TEXT;
-//std::vector <resource_t> split_canvas(5);
+
+// split_canvas holds the most important data in the program,
+// the mandelbrot's rendering, which is saved into sf::VertexArray
 resource_t * split_canvas;
 
-//std::vector<std::thread> threadsQueue;
+
 sf::Mutex mutex;
 sf::Mutex renderLock;
-//sf::Lock lock;
-std::atomic < bool > stopThreads(false);
-std::atomic < bool > isThreadsWorking(false);
-std::atomic < int > theThreadsDone(0);
-std::atomic < int > progress(0);
-thread_pool < std:: function < void(mdbl_data) > , mdbl_data > pool;
 
+std::atomic<bool> stopThreads(false);
+std::atomic<bool> isThreadsWorking(false);
+std::atomic<int> theThreadsDone(0);
+std::atomic<int> progress(0);
+// pool will be used for passing workloads to threads
+thread_pool<std::function<void(mdbl_data)>, mdbl_data> pool;
+
+// internal representation of bmpfile
 rgb * storageBMP;
+// the output bmpfile
 TinyBitmapOut bmpOutput;
+// check whether to slow down
 bool isPaused = false;
-std::atomic < bool > closeThreadRenderer(false);
-//std::atomic<int> drawCanvas(0);
+// determines whether to shutdown the rendering thread
+std::atomic<bool> closeThreadRenderer(false);
+
 bool showText = true;
 std::ifstream File("config.txt");
-
-void stopRenderingThreads() {
-  if (isThreadsWorking.load()) {
-    stopThreads = true;
-  }
-  progress = 0;
-
-  renderLock.lock();
-
-  pool.kill_jobs();
-
-  renderLock.unlock();
-
-  theThreadsDone = 0;
-  isThreadsWorking = false;
-  stopThreads = false;
-}
 
 #endif

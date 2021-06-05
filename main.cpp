@@ -23,8 +23,21 @@
 #include "pool.hpp"
 #include "resource_t.hpp"
 #include "const_init.hpp"
-
 #include "mdbl.hpp"
+
+/// The functions and utilities
+rgb optimizedSmoothColor(double mu);
+rgb smoothColor(int iterations_t, int maxIterations_t, double i_t, double j_t,
+  double rsquare_t, double isquare_t, double zsquare_t, double sx_t, double sy_t);
+
+void draw(const mdbl_data&);
+void prepare_canvas(int);
+void thread_split(int);
+void renderingThread(sf::RenderWindow * window);
+void refresh();
+void zoomIn();
+void zoomOut();
+void stopRenderingThreads();
 
 #if defined(_WIN32) || defined(_WIN64)
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow) {
@@ -32,8 +45,8 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 int main(int argc, char * argv[]){
 #endif
   //get the number of CPU CORES
-  unsigned int determinator_of_cpu_cores = std::thread::hardware_concurrency();
-  MAX_DRAWER_THREADS = (determinator_of_cpu_cores < 1) ? 1 : determinator_of_cpu_cores;
+  unsigned int determiner_of_cpu_cores = std::thread::hardware_concurrency();
+  MAX_DRAWER_THREADS = (determiner_of_cpu_cores < 1) ? 1 : determiner_of_cpu_cores;
 
   //Init XThreads (Linux)
 #if defined(unix) || defined(__unix) || defined(__unix__)
@@ -568,6 +581,21 @@ void renderingThread(sf::RenderWindow * window) {
   }
   std::cout << "Exiting Rendering Thread..\n";
   window -> setActive(false);
+}
+
+void stopRenderingThreads() {
+  if (isThreadsWorking.load()) {
+    stopThreads = true;
+  }
+  progress = 0;
+
+  renderLock.lock();
+  pool.kill_jobs();
+  renderLock.unlock();
+
+  theThreadsDone = 0;
+  isThreadsWorking = false;
+  stopThreads = false;
 }
 
 void zoomIn() {
