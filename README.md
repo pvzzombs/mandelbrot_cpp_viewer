@@ -9,11 +9,12 @@ A mandelbrot viewer made in C++ using SFML library.
 * SFML 2.5.1 or newer
 * CMAKE 3.1 or newer
 
-### Instructions:
+### Instructions:  
 1. Clone this repo using git  
 ```
 git clone https://github.com/pvzzombs/mandelbrot_cpp_viewer.git
 cd mandelbrot_cpp_viewer
+```
 2. Clone the SFML repo by using git  
 ```
 git clone https://github.com/SFML/SFML.git
