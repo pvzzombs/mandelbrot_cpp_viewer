@@ -104,7 +104,7 @@ int main(int argc, char * argv[]){
   window.setActive(false);
 
   //set limit of framerate for about 30-60 fps
-  //window.setFramerateLimit(60);
+  window.setFramerateLimit(30);
 
   //create a pixel using rectangle shape
   sf::RectangleShape pixel(sf::Vector2f(1, 1));
@@ -343,7 +343,7 @@ int main(int argc, char * argv[]){
         if (event.key.code == sf::Keyboard::P) {
           if (isPaused) {
             isPaused = false;
-            window.setFramerateLimit(60);
+            window.setFramerateLimit(30);
           } else {
             isPaused = true;
             window.setFramerateLimit(2);
