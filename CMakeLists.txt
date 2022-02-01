@@ -43,7 +43,7 @@ endif(WIN32)
 
 
 # Find SFML shared libraries
-find_package(SFML 2.5 
+find_package(SFML 2.5.1 
   COMPONENTS 
     system window graphics network audio REQUIRED
   )
