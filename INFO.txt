@@ -7,13 +7,3 @@ To change the size of the window, go to folder of the program
 --------------------------------------------------------------------------
 
 This program is released under the GNU Lesser General Public License.
-
-mandelbrot_cpp_viewer is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-mandelbrot_cpp_viewer is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
