@@ -25,20 +25,6 @@
 #include "const_init.hpp"
 #include "mdbl.hpp"
 
-/// The functions and utilities
-rgb optimizedSmoothColor(double mu);
-rgb smoothColor(int iterations_t, int maxIterations_t, double i_t, double j_t,
-  double rsquare_t, double isquare_t, double zsquare_t, double sx_t, double sy_t);
-
-void draw(const mdbl_data&);
-void prepare_canvas(int);
-void thread_split(int);
-void renderingThread(sf::RenderWindow * window);
-void refresh();
-void zoomIn();
-void zoomOut();
-void stopRenderingThreads();
-
 #if defined(_WIN32) || defined(_WIN64)
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow) {
 #else
@@ -131,8 +117,9 @@ int main(int argc, char * argv[]){
   text.setCharacterSize(16);
 
   //store important objects to be able to use outside
-  TEXT = & text;
-  ZOOMBOX = & zoomBox;
+  TEXT = &text;
+  ZOOMBOX = &zoomBox;
+  WINDOW = &window;
 
   //create context
   //sf::Context contxt;
@@ -145,9 +132,6 @@ int main(int argc, char * argv[]){
   // split thread into the number we wanted
   thread_split(MAX_DRAWER_THREADS.return_value());
 
-  //prevent resize when programmatically size is set
-  bool ignoreResize = false;
-
   //while window is open
   while (window.isOpen()) {
     //check to finish drawing
@@ -157,6 +141,7 @@ int main(int argc, char * argv[]){
     //inside the main while loop
     sf::Event event;
     while (window.pollEvent(event)) {
+      EVENT = &event;
       if (event.type == sf::Event::Closed) {
         stopRenderingThreads();
         pool.shutdown();
@@ -168,12 +153,7 @@ int main(int argc, char * argv[]){
       }
 
       if (event.type == sf::Event::Resized) {
-        if (!ignoreResize) {
-          ignoreResize = true;
-          window.setSize(sf::Vector2u(cWidth, cHeight));
-        } else {
-          ignoreResize = false;
-        }
+        mdbl_evt_resize();
       }
 
       if (event.type == sf::Event::MouseButtonPressed) {
@@ -184,190 +164,78 @@ int main(int argc, char * argv[]){
 
         //left click
         if (event.mouseButton.button == sf::Mouse::Left) {
-          mousex = event.mouseButton.x;
-          mousey = event.mouseButton.y;
-          zoomIn();
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_mouse_lbutton_pressed();
         }
 
         //right click
         if (event.mouseButton.button == sf::Mouse::Right) {
-          mousex = event.mouseButton.x;
-          mousey = event.mouseButton.y;
-          zoomOut();
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_mouse_rbutton_pressed();
         }
       }
 
       if (event.type == sf::Event::MouseMoved) {
-        zoomBox.setPosition(float(event.mouseMove.x), float(event.mouseMove.y));
+        mdbl_evt_mouse_moved();
       }
 
       if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Left) {
-          if (isThreadsWorking.load()) {
-            stopRenderingThreads();
-          }
-
-          x -= panX;
-          xmax -= panX;
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_key_left_pressed();
         }
 
         if (event.key.code == sf::Keyboard::Right) {
-          if (isThreadsWorking.load()) {
-            stopRenderingThreads();
-          }
-
-          x += panX;
-          xmax += panX;
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_key_right_pressed();
         }
 
         if (event.key.code == sf::Keyboard::Down) {
-          if (isThreadsWorking.load()) {
-            stopRenderingThreads();
-          }
-
-          y -= panY;
-          ymax -= panY;
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_key_down_pressed();
         }
 
         if (event.key.code == sf::Keyboard::Up) {
-          if (isThreadsWorking.load()) {
-            stopRenderingThreads();
-          }
-
-          y += panY;
-          ymax += panY;
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_key_up_pressed();
         }
 
         if (event.key.code == sf::Keyboard::D) {
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_key_d_pressed();
         }
 
         if (event.key.code == sf::Keyboard::Space) {
-          if (isThreadsWorking.load()) {
-            stopRenderingThreads();
-          }
-
-          double mx = floor(cWidth * 1 / 8);
-          double my = floor(cHeight * 1 / 8);
-
-          double nx = x + (mx / cWidth) * (xmax - x);
-          double nxmax = x + ((cWidth - mx) / cWidth) * (xmax - x);
-
-          ///std::cout << "Here: " << nx << " " << nxmax << "\n";
-          ///std::cout << "Here: " << mx << " " << cWidth - mx << "\n";
-
-          x = nx;
-          xmax = nxmax;
-
-          double ny = y + (my / cHeight) * (ymax - y);
-          double nymax = y + ((cHeight - my) / cHeight) * (ymax - y);
-
-          y = ny;
-          ymax = nymax;
-
-          maxIterations += 50;
-          cx = 0;
-          ticks = 0;
-
-          double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
-          panX = pan * floor(cWidth / 4);
-          panY = pan * floor(cHeight / 4);
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_key_space_pressed();
         }
 
         if (event.key.code == sf::Keyboard::W) {
-          if (isThreadsWorking.load()) {
-            stopRenderingThreads();
-          }
-
-          maxIterations += 50;
-          cx = 0;
-          ticks = 0;
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_key_w_pressed();
         }
 
         if (event.key.code == sf::Keyboard::S) {
-          if (isThreadsWorking.load()) {
-            stopRenderingThreads();
-          }
-
-          maxIterations -= 50;
-          cx = 0;
-          ticks = 0;
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_key_s_pressed();
         }
 
         if (event.key.code == sf::Keyboard::Q) {
-          if (zoomy + 20 < cHeight) {
-            zoomy += 20;
-            zoom = floor(zoomy * (cWidth / cHeight));
-          }
-          zoomBox.setSize(sf::Vector2f(zoom, zoomy));
+          mdbl_evt_key_q_pressed();
         }
 
         if (event.key.code == sf::Keyboard::A) {
-          if (zoomy - 20 > 0) {
-            zoomy -= 20;
-            zoom = floor(zoomy * (cWidth / cHeight));
-          }
-          zoomBox.setSize(sf::Vector2f(zoom, zoomy));
+          mdbl_evt_key_a_pressed();
         }
 
         if (event.key.code == sf::Keyboard::R) {
-          if (isThreadsWorking.load()) {
-            stopRenderingThreads();
-          }
-          zoomy = 100;
-          zoom = floor(zoomy * (cWidth / cHeight));
-          x = -2.0;
-          y = 2.0;
-          xmax = (cWidth / cHeight) > 1 ? 2.0 * (cWidth / cHeight) + 2.0 : 2.0;
-          ymax = -2.0;
-          double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
-          panX = pan * floor(cWidth / 4);
-          panY = pan * floor(cHeight / 4);
-          iterations = 0;
-          maxIterations = 50;
-          cx = 0;
-          ticks = 0;
-          zoomBox.setSize(sf::Vector2f(zoom, zoomy));
-          thread_split(MAX_DRAWER_THREADS.return_value());
+          mdbl_evt_key_r_pressed();
         }
 
         if (event.key.code == sf::Keyboard::P) {
-          if (isPaused) {
-            isPaused = false;
-            window.setFramerateLimit(30);
-          } else {
-            isPaused = true;
-            window.setFramerateLimit(2);
-          }
+          mdbl_evt_key_p_pressed();
         }
 
         if (event.key.code == sf::Keyboard::F) {
-          if (!isPaused) {
-            isPaused = false;
-            window.setFramerateLimit(0);
-          }
+          mdbl_evt_key_f_pressed();
         }
 
         if (event.key.code == sf::Keyboard::I) {
-          if (showText)
-            showText = false;
-          else
-            showText = true;
+          mdbl_evt_key_i_pressed();
         }
 
         if (event.key.code == sf::Keyboard::Enter) {
-          bmpOutput.write_data(storageBMP);
-          ///bmpOutput.flip_data_horizontal();
-          bmpOutput.save_data();
+          mdbl_evt_key_enter_pressed();
         }
       }
     }
@@ -653,4 +521,197 @@ void zoomOut() {
   double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
   panX = pan * floor(cWidth / 4);
   panY = pan * floor(cHeight / 4);
+}
+
+void mdbl_evt_resize(){
+  if (!ignoreResize) {
+    ignoreResize = true;
+    WINDOW->setSize(sf::Vector2u(cWidth, cHeight));
+  } else {
+    ignoreResize = false;
+  }
+}
+
+void mdbl_evt_mouse_lbutton_pressed(){
+  mousex = EVENT->mouseButton.x;
+  mousey = EVENT->mouseButton.y;
+  zoomIn();
+  thread_split(MAX_DRAWER_THREADS.return_value());
+}
+
+void mdbl_evt_mouse_rbutton_pressed(){
+  mousex = EVENT->mouseButton.x;
+  mousey = EVENT->mouseButton.y;
+  zoomOut();
+  thread_split(MAX_DRAWER_THREADS.return_value());
+}
+
+void mdbl_evt_mouse_moved(){
+  ZOOMBOX->setPosition(float(EVENT->mouseMove.x), float(EVENT->mouseMove.y));
+}
+
+void mdbl_evt_key_left_pressed(){
+  if (isThreadsWorking.load()) {
+    stopRenderingThreads();
+  }
+
+  x -= panX;
+  xmax -= panX;
+  thread_split(MAX_DRAWER_THREADS.return_value());
+}
+
+void mdbl_evt_key_right_pressed(){
+  if (isThreadsWorking.load()) {
+    stopRenderingThreads();
+  }
+
+  x += panX;
+  xmax += panX;
+  thread_split(MAX_DRAWER_THREADS.return_value());
+}
+
+void mdbl_evt_key_down_pressed(){
+  if (isThreadsWorking.load()) {
+    stopRenderingThreads();
+  }
+
+  y -= panY;
+  ymax -= panY;
+  thread_split(MAX_DRAWER_THREADS.return_value());
+}
+
+void mdbl_evt_key_up_pressed(){
+  if (isThreadsWorking.load()) {
+    stopRenderingThreads();
+  }
+
+  y += panY;
+  ymax += panY;
+  thread_split(MAX_DRAWER_THREADS.return_value());
+}
+
+void mdbl_evt_key_w_pressed(){
+  if (isThreadsWorking.load()) {
+    stopRenderingThreads();
+  }
+
+  maxIterations += 50;
+  cx = 0;
+  ticks = 0;
+  thread_split(MAX_DRAWER_THREADS.return_value());
+}
+
+void mdbl_evt_key_s_pressed(){
+  if (isThreadsWorking.load()) {
+    stopRenderingThreads();
+  }
+
+  maxIterations -= 50;
+  cx = 0;
+  ticks = 0;
+  thread_split(MAX_DRAWER_THREADS.return_value());
+}
+
+void mdbl_evt_key_d_pressed(){
+  thread_split(MAX_DRAWER_THREADS.return_value());
+}
+
+void mdbl_evt_key_q_pressed(){
+  if (zoomy + 20 < cHeight) {
+    zoomy += 20;
+    zoom = floor(zoomy * (cWidth / cHeight));
+  }
+  ZOOMBOX->setSize(sf::Vector2f(zoom, zoomy));
+}
+
+void mdbl_evt_key_a_pressed(){
+  if (zoomy - 20 > 0) {
+    zoomy -= 20;
+    zoom = floor(zoomy * (cWidth / cHeight));
+  }
+  ZOOMBOX->setSize(sf::Vector2f(zoom, zoomy));
+}
+
+void mdbl_evt_key_r_pressed(){
+  if (isThreadsWorking.load()) {
+    stopRenderingThreads();
+  }
+  zoomy = 100;
+  zoom = floor(zoomy * (cWidth / cHeight));
+  x = -2.0;
+  y = 2.0;
+  xmax = (cWidth / cHeight) > 1 ? 2.0 * (cWidth / cHeight) + 2.0 : 2.0;
+  ymax = -2.0;
+  double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
+  panX = pan * floor(cWidth / 4);
+  panY = pan * floor(cHeight / 4);
+  iterations = 0;
+  maxIterations = 50;
+  cx = 0;
+  ticks = 0;
+  ZOOMBOX->setSize(sf::Vector2f(zoom, zoomy));
+  thread_split(MAX_DRAWER_THREADS.return_value());
+}
+
+void mdbl_evt_key_p_pressed(){
+  if (isPaused) {
+    isPaused = false;
+    WINDOW->setFramerateLimit(30);
+  } else {
+    isPaused = true;
+    WINDOW->setFramerateLimit(2);
+  }
+}
+
+void mdbl_evt_key_f_pressed(){
+  if (!isPaused) {
+    isPaused = false;
+    WINDOW->setFramerateLimit(0);
+  }
+}
+
+void mdbl_evt_key_i_pressed(){
+  if (showText)
+    showText = false;
+  else
+    showText = true;
+}
+
+void mdbl_evt_key_enter_pressed(){
+  bmpOutput.write_data(storageBMP);
+  ///bmpOutput.flip_data_horizontal();
+  bmpOutput.save_data();
+}
+
+void mdbl_evt_key_space_pressed(){
+  if (isThreadsWorking.load()) {
+    stopRenderingThreads();
+  }
+
+  double mx = floor(cWidth * 1 / 8);
+  double my = floor(cHeight * 1 / 8);
+
+  double nx = x + (mx / cWidth) * (xmax - x);
+  double nxmax = x + ((cWidth - mx) / cWidth) * (xmax - x);
+
+  ///std::cout << "Here: " << nx << " " << nxmax << "\n";
+  ///std::cout << "Here: " << mx << " " << cWidth - mx << "\n";
+
+  x = nx;
+  xmax = nxmax;
+
+  double ny = y + (my / cHeight) * (ymax - y);
+  double nymax = y + ((cHeight - my) / cHeight) * (ymax - y);
+
+  y = ny;
+  ymax = nymax;
+
+  maxIterations += 50;
+  cx = 0;
+  ticks = 0;
+
+  double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
+  panX = pan * floor(cWidth / 4);
+  panY = pan * floor(cHeight / 4);
+  thread_split(MAX_DRAWER_THREADS.return_value());
 }

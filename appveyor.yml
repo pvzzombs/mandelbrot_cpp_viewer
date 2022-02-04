@@ -12,7 +12,7 @@ artifacts:
 #  auth_token:
 #    secure: FeBOyWj8jfeUe7rzAM0ffdKbpnVQgLb5BxB6yrqWOzC/UoBi1JDbUdWxyQnjK1SA
 #  artifact: mandelbrot_cpp_viewer.7z
-#  draft: false 
+#  draft: false
 #  prerelease: false
 #  on:
 #    branch: main

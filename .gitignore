@@ -27,3 +27,6 @@ sfml/
 SFML/*.*
 sfml/*.*
 SFML
+
+#ignore output.bmp
+output.bmp

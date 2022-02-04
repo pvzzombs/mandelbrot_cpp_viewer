@@ -62,6 +62,7 @@ class TinyBitmapOut {
     unsigned int width;
     unsigned int height;
     std::string path_to_file;
+
 public:
 ////////////////////////////////////////////////////////////
 /// \brief Default constructor of class TinyBitmapOut

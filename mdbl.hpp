@@ -1,5 +1,5 @@
 /*
-    mdbl.cpp - Main header file
+    mdbl.hpp - Main header file
     Part of mandelbrot viewer made in C++ using SFML library
     Copyright (C) 2021 Miles MJ Jamon
 
@@ -148,6 +148,8 @@ std::stringstream ss;
 
 sf::RectangleShape * ZOOMBOX;
 sf::Text * TEXT;
+sf::RenderWindow * WINDOW;
+sf::Event * EVENT;
 
 // split_canvas holds the most important data in the program,
 // the mandelbrot's rendering, which is saved into sf::VertexArray
@@ -168,6 +170,8 @@ thread_pool<std::function<void(mdbl_data)>, mdbl_data> pool;
 rgb * storageBMP;
 // the output bmpfile
 TinyBitmapOut bmpOutput;
+//prevent resize when programmatically size is set
+bool ignoreResize = false;
 // check whether to slow down
 bool isPaused = false;
 // determines whether to shutdown the rendering thread
@@ -175,5 +179,39 @@ std::atomic<bool> closeThreadRenderer(false);
 
 bool showText = true;
 std::ifstream File("config.txt");
+
+/// The functions and utilities
+rgb optimizedSmoothColor(double mu);
+rgb smoothColor(int iterations_t, int maxIterations_t, double i_t, double j_t,
+  double rsquare_t, double isquare_t, double zsquare_t, double sx_t, double sy_t);
+
+void draw(const mdbl_data&);
+void prepare_canvas(int);
+void thread_split(int);
+void renderingThread(sf::RenderWindow * window);
+void refresh();
+void zoomIn();
+void zoomOut();
+void stopRenderingThreads();
+
+void mdbl_evt_resize();
+void mdbl_evt_mouse_lbutton_pressed();
+void mdbl_evt_mouse_rbutton_pressed();
+void mdbl_evt_mouse_moved();
+void mdbl_evt_key_left_pressed();
+void mdbl_evt_key_right_pressed();
+void mdbl_evt_key_down_pressed();
+void mdbl_evt_key_up_pressed();
+void mdbl_evt_key_w_pressed();
+void mdbl_evt_key_s_pressed();
+void mdbl_evt_key_d_pressed();
+void mdbl_evt_key_q_pressed();
+void mdbl_evt_key_a_pressed();
+void mdbl_evt_key_r_pressed();
+void mdbl_evt_key_p_pressed();
+void mdbl_evt_key_f_pressed();
+void mdbl_evt_key_i_pressed();
+void mdbl_evt_key_enter_pressed();
+void mdbl_evt_key_space_pressed();
 
 #endif
