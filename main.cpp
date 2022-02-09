@@ -102,7 +102,7 @@ int main(int argc, char * argv[]){
   zoomBox.setOutlineColor(sf::Color::Red);
 
   //load a font
-  if (!font.loadFromFile("verdana.ttf")) {
+  if (!font.loadFromFile("dsmp.otf")) {
     exit(1);
   }
 
