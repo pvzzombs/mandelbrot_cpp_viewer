@@ -94,19 +94,19 @@ if(LINK_MANDELBROT_STATIC)
 else()
   find_library(SFML_GRAPHICS_LIB
   NAMES sfml-graphics
-  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib"
+  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib" "SFML\\build\\lib\\Release"
   #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   find_library(SFML_WINDOW_LIB
   NAMES sfml-window
-  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib"
+  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib" "SFML\\build\\lib\\Release"
   #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   find_library(SFML_SYSTEM_LIB
   NAMES sfml-system
-  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib"
+  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib" "SFML\\build\\lib\\Release"
   #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
