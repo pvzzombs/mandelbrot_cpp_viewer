@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.1)
 
 # Set project name and version
 project(Mandelbrot)
@@ -113,19 +113,19 @@ else()
   # shared libraries
   find_file(SFML_GRAPHICS_DLL
   NAMES "sfml-graphics-2.dll" "libsfml-graphics.so"
-  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib"
+  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib" "SFML\\build\\lib\\Release"
   #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   find_file(SFML_WINDOW_DLL
   NAMES "sfml-window-2.dll" "libsfml-window.so"
-  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib"
+  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib" "SFML\\build\\lib\\Release"
   #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   find_file(SFML_SYSTEM_DLL
   NAMES "sfml-system-2.dll" "libsfml-system.so"
-  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib"
+  HINTS "lib" "SFML\\build\\lib" "SFML/build/lib" "SFML\\build\\lib\\Release"
   #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
   message("-- The shared libraries are ${SFML_GRAPHICS_DLL} ${SFML_WINDOW_DLL} ${SFML_SYSTEM_DLL}")
