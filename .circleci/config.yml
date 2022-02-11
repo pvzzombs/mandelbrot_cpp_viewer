@@ -71,6 +71,9 @@ jobs:
           name: Configure and Build SFML Folder
           command: 'cd SFML &&  mkdir build && cd build && cmake .. -DCMAKE_BUILD_TYPE=Release && cmake --build . --config Release'
       - run:
+          name: List built libraries
+          command: 'ls -la --recursive'
+      - run:
           name: Build mandelbrot_cpp_viewer Folder
           command: 'mkdir build'
       - run:
