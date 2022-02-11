@@ -52,6 +52,10 @@ endif(WIN32)
 #  MESSAGE("-- Static build detected")
 #endif(LINK_MANDELBROT_STATIC)
 
+# SFML version
+set(SFML_VERSION_AB 2.5)
+set(SFML_VERSION_ABX 2.5.1)
+
 # Executables to be compiled
 add_executable(Mandelbrot ${MSVC_PATCH}  main.cpp TinyBitmapOut.cpp)
 add_executable(Test ${MSVC_PATCH} test/test.cpp)
@@ -128,6 +132,39 @@ else()
   HINTS "lib" "SFML\\build\\lib" "SFML/build/lib" "SFML\\build\\lib\\Release"
   #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
+
+  if(UNIX)
+    find_file(SFML_GRAPHICS_SO
+    NAMES "libsfml-graphics.so.${SFML_VERSION_AB}"
+    HINTS "lib" "SFML/build/lib"
+    )
+
+    find_file(SFML_WINDOW_SO
+    NAMES "libsfml-window.so.${SFML_VERSION_AB}"
+    HINTS "lib" "SFML/build/lib"
+    )
+
+    find_file(SFML_SYSTEM_SO
+    NAMES "libsfml-system.so.${SFML_VERSION_AB}"
+    HINTS "lib" "SFML/build/lib"
+    )
+
+    find_file(SFML_GRAPHICS_MAIN
+    NAMES "libsfml-graphics.so.${SFML_VERSION_ABX}"
+    HINTS "lib" "SFML/build/lib"
+    )
+  
+    find_file(SFML_WINDOW_MAIN
+    NAMES "libsfml-window.so.${SFML_VERSION_ABX}"
+    HINTS "lib" "SFML/build/lib"
+    )
+  
+    find_file(SFML_SYSTEM_MAIN
+    NAMES "libsfml-system.so.${SFML_VERSION_ABX}"
+    HINTS "lib" "SFML/build/lib"
+    )
+  message("-- The linux shared libraries are ${SFML_GRAPHICS_SO} => ${SFML_GRAPHICS_MAIN}, ${SFML_WINDOW_SO} => ${SFML_WINDOW_MAIN}, ${SFML_SYSTEM_SO} => ${SFML_SYSTEM_MAIN}")
+  endif()
   message("-- The shared libraries are ${SFML_GRAPHICS_DLL} ${SFML_WINDOW_DLL} ${SFML_SYSTEM_DLL}")
 endif()
 
@@ -140,8 +177,8 @@ if(LINK_MANDELBROT_STATIC)
     target_link_libraries(Test ${SFML_GRAPHICS_LIB} ${SFML_WINDOW_LIB} ${SFML_SYSTEM_LIB} ${FREETYPE_LIB} opengl32 winmm gdi32)
   else()
     MESSAGE("-- The static libraries to be linked at are freetype GL udev sfml-graphics-s sfml-window-s sfml-system-s X11 pthread")
-    target_link_libraries(Mandelbrot freetype GL udev sfml-graphics-s sfml-window-s sfml-system-s X11 pthread)
-    target_link_libraries(Test freetype GL udev sfml-graphics-s sfml-window-s sfml-system-s X11 pthread)
+    target_link_libraries(Mandelbrot freetype GL udev ${SFML_GRAPHICS_LIB} ${SFML_WINDOW_LIB} ${SFML_SYSTEM_LIB} X11 pthread)
+    target_link_libraries(Test freetype GL udev ${SFML_GRAPHICS_LIB} ${SFML_WINDOW_LIB} ${SFML_SYSTEM_LIB} X11 pthread)
   endif()
 else()
   MESSAGE("-- Using dynamic SFML libraries")
@@ -149,8 +186,8 @@ else()
     target_link_libraries(Mandelbrot ${SFML_GRAPHICS_LIB} ${SFML_WINDOW_LIB} ${SFML_SYSTEM_LIB})
     target_link_libraries(Test ${SFML_GRAPHICS_LIB} ${SFML_WINDOW_LIB} ${SFML_SYSTEM_LIB})
   else()
-    target_link_libraries(Mandelbrot X11 pthread sfml-graphics sfml-window sfml-system)
-    target_link_libraries(Test X11 pthread sfml-graphics sfml-window sfml-system)
+    target_link_libraries(Mandelbrot X11 pthread ${SFML_GRAPHICS_LIB} ${SFML_WINDOW_LIB} ${SFML_SYSTEM_LIB})
+    target_link_libraries(Test X11 pthread ${SFML_GRAPHICS_LIB} ${SFML_WINDOW_LIB} ${SFML_SYSTEM_LIB})
   endif()
 endif()
 
@@ -204,9 +241,15 @@ else()
       configure_file("${CMAKE_CURRENT_SOURCE_DIR}\\config.txt" "${CMAKE_CURRENT_BINARY_DIR}\\config.txt" COPYONLY)
     endif()
   else()
-    configure_file("${SFML_SYSTEM_DLL}" "${CMAKE_CURRENT_BINARY_DIR}\\sfml-system-2.dll" COPYONLY)
-    configure_file("${SFML_WINDOW_DLL}" "${CMAKE_CURRENT_BINARY_DIR}\\sfml-window-2.dll" COPYONLY)
-    configure_file("${SFML_GRAPHICS_DLL}" "${CMAKE_CURRENT_BINARY_DIR}\\sfml-graphics-2.dll" COPYONLY)
+    configure_file("${SFML_SYSTEM_DLL}" "${CMAKE_CURRENT_BINARY_DIR}/libsfml-system.so" COPYONLY)
+    configure_file("${SFML_WINDOW_DLL}" "${CMAKE_CURRENT_BINARY_DIR}/libsfml-window.so" COPYONLY)
+    configure_file("${SFML_GRAPHICS_DLL}" "${CMAKE_CURRENT_BINARY_DIR}/libsfml-graphics.so" COPYONLY)
+    configure_file("${SFML_SYSTEM_SO}" "${CMAKE_CURRENT_BINARY_DIR}/libsfml-system.so.${SFML_VERSION_AB}" COPYONLY)
+    configure_file("${SFML_WINDOW_SO}" "${CMAKE_CURRENT_BINARY_DIR}/libsfml-window.so.${SFML_VERSION_AB}" COPYONLY)
+    configure_file("${SFML_GRAPHICS_SO}" "${CMAKE_CURRENT_BINARY_DIR}/libsfml-graphics.so.${SFML_VERSION_AB}" COPYONLY)
+    configure_file("${SFML_SYSTEM_MAIN}" "${CMAKE_CURRENT_BINARY_DIR}/libsfml-system.so.${SFML_VERSION_ABX}" COPYONLY)
+    configure_file("${SFML_WINDOW_MAIN}" "${CMAKE_CURRENT_BINARY_DIR}/libsfml-window.so.${SFML_VERSION_ABX}" COPYONLY)
+    configure_file("${SFML_GRAPHICS_MAIN}" "${CMAKE_CURRENT_BINARY_DIR}/libsfml-graphics.so.${SFML_VERSION_ABX}" COPYONLY)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/dsmp.otf" "${CMAKE_CURRENT_BINARY_DIR}/dsmp.otf" COPYONLY)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.txt" "${CMAKE_CURRENT_BINARY_DIR}/config.txt" COPYONLY)
   endif()
