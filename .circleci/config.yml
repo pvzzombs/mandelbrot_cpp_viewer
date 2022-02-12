@@ -78,7 +78,7 @@ jobs:
           command: 'mkdir build'
       - run:
           name: Configure and Build mandelbrot_cpp_viewer
-          command: 'cd build && cmake .. -DSFML_DIR="SFML/build/" -DCMAKE_BUILD_TYPE=Release && cmake --build . --config Release'
+          command: 'cd build && cmake .. -DSFML_DIR="SFML/build/" -DCMAKE_BUILD_TYPE=Release -DPROJECT_ARCH="x64" -DLINK_MANDELBROT_STATIC=0 && cmake --build . --config Release'
       - run:
           name: Run Binary Files
           command: 'chmod +x script.sh && ./script.sh'

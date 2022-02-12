@@ -20,17 +20,17 @@ cd mandelbrot_cpp_viewer
 git clone --depth 1 --branch 2.5.1 https://github.com/SFML/SFML.git
 cd SFML
 ```
-3. Build the SFML libraries using cmake  
+3. Configure and build the SFML libraries using cmake  
 ```
 mkdir build && cd build
-cmake .. 
+cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ```
-4. Build mandelbrot_cpp_viewer  
+4. Configure and build mandelbrot_cpp_viewer  
 ```
 cd ../../
 mkdir build && cd build
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Release -DPROJECT_ARCH="x64" -DLINK_MANDELBROT_STATIC=0
 cmake --build .
 ```
 5. Done!  

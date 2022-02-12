@@ -30,14 +30,14 @@ unsigned int rt_array_current = 0;
 
 class resource_t {
   public:
-    unsigned int index = 0;
+    unsigned int index;
 
   /*                   constructor                    */
   /* define and initialize*/
-  resource_t() {
+  resource_t(): index(0) {
   }
 
-  resource_t(unsigned int width, unsigned int height) {
+  resource_t(unsigned int width, unsigned int height): index(0) {
     //create the canvas
     index = rt_array_current;
     ++rt_array_current;
