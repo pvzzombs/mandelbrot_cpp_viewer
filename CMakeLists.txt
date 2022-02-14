@@ -100,88 +100,79 @@ if(LINK_MANDELBROT_STATIC)
   find_library(SFML_GRAPHICS_LIB
   NAMES "libsfml-graphics-s.a" "sfml-graphics-s.lib"
   HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
-  #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   find_library(SFML_WINDOW_LIB
   NAMES "libsfml-window-s.a" "sfml-window-s.lib"
   HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
-  #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   find_library(SFML_SYSTEM_LIB
   NAMES "libsfml-system-s.a" "sfml-system-s.lib"
   HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
-  #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
 else()
   find_library(SFML_GRAPHICS_LIB
   NAMES sfml-graphics
   HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
-  #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   find_library(SFML_WINDOW_LIB
   NAMES sfml-window
   HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
-  #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   find_library(SFML_SYSTEM_LIB
   NAMES sfml-system
   HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
-  #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   # shared libraries
   find_file(SFML_GRAPHICS_DLL
   NAMES "sfml-graphics-2.dll" "libsfml-graphics.so"
   HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
-  #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   find_file(SFML_WINDOW_DLL
   NAMES "sfml-window-2.dll" "libsfml-window.so"
   HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
-  #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   find_file(SFML_SYSTEM_DLL
   NAMES "sfml-system-2.dll" "libsfml-system.so"
   HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
-  #PATHS "D:\\Documents\\mandelbrot_cpp_viewer\\lib"
   )
 
   if(UNIX)
     find_file(SFML_GRAPHICS_SO
     NAMES "libsfml-graphics.so.${SFML_VERSION_AB}"
-    HINTS "${CUSTOM_LIB_DIR}" "lib" "SFML/build/lib"
+    HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
     )
 
     find_file(SFML_WINDOW_SO
     NAMES "libsfml-window.so.${SFML_VERSION_AB}"
-    HINTS "${CUSTOM_LIB_DIR}" "lib" "SFML/build/lib"
+    HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
     )
 
     find_file(SFML_SYSTEM_SO
     NAMES "libsfml-system.so.${SFML_VERSION_AB}"
-    HINTS "${CUSTOM_LIB_DIR}" "lib" "SFML/build/lib"
+    HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
     )
 
     find_file(SFML_GRAPHICS_MAIN
     NAMES "libsfml-graphics.so.${SFML_VERSION_ABX}"
-    HINTS "${CUSTOM_LIB_DIR}" "lib" "SFML/build/lib"
+    HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
     )
   
     find_file(SFML_WINDOW_MAIN
     NAMES "libsfml-window.so.${SFML_VERSION_ABX}"
-    HINTS "${CUSTOM_LIB_DIR}" "lib" "SFML/build/lib"
+    HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
     )
   
     find_file(SFML_SYSTEM_MAIN
     NAMES "libsfml-system.so.${SFML_VERSION_ABX}"
-    HINTS "${CUSTOM_LIB_DIR}" "lib" "SFML/build/lib"
+    HINTS "${CUSTOM_LIB_DIR}" "lib" "${SFML_LIB_DIR}"
     )
   message(STATUS "The linux shared libraries are ${SFML_GRAPHICS_SO} => ${SFML_GRAPHICS_MAIN}, ${SFML_WINDOW_SO} => ${SFML_WINDOW_MAIN}, ${SFML_SYSTEM_SO} => ${SFML_SYSTEM_MAIN}")
   endif()
