@@ -46,8 +46,6 @@
 const_init < unsigned int > MAX_DRAWER_THREADS;
 //#define MAX_THREADS 4
 
-/// cWidth and cHeight ---> The width and the height of the canvas, respectively.
-double cWidth = 400, cHeight = 400;
 /// zoom and zoomy ---> The width and the height of the zoombox, respectively
 double zoom = 100, zoomy = 100;
 /// panX andd panY ---> The size of adjusted pan use for moving across the coordinates
@@ -55,42 +53,40 @@ double panX = 0, panY = 0;
 /// ticks ---> The total iterations achieved (from the first thread up to the last thread)
 long ticks = 0;
 
-/// x and y ---> represents the top left coordinate of the complex plane
-/// (since from the first writing, I don't know that a std::complex class exists
-double x = -2.0, y = 2.0;
-/// xmax and ymax ---> represents the bottom right coordinate of the complex plane
-double xmax = 2.0, ymax = -2.0;
+
 /// cx and cy ---> represents the coordinate respective to the canvas width and height
 float cx = 0, cy = 0;
-/// iterations and maxIterations ---> iterations is used with maxIterations
-/// it represents whether the given number explodes, maxI. is used for telling it
-int iterations = 0, maxIterations = 50;
 
 /// mousex and mousey ---> used for storing the temporary position of mouse inside the canvas
 int mousex = 0, mousey = 0;
 
-/// sx and sy ---> this are the scaled version of the current coordinate of the canvas
-/// to the current range, either from x to xmax, to y to ymax
-double sx = 0, sy = 0;
-/// i and j is used for looping
-double i = 0, j = 0;
-
 /// rsquare, isquare and zsquare ---> used for temporary storage
 double rsquare = 0, isquare = 0, zsquare = 0;
 /// the constant log of 2 (base 10?)
-double mlog2 = log((double) 2);
+double mlog2 = std::log((double) 2);
 
 // mdbl_data is used to represent the 
 // details inside the mandelbrot draw function
 struct mdbl_data {
-  int i;
-  float cx_start_thread, cx_end_thread;
-  int maxIterations;
-  double x, y, sx, sy, cWidth, cHeight, xmax, ymax;
-};
+  int i, j; /// i and j is used for looping
+  float cx_start_thread, cx_end_thread; /// start and end of a part to draw
+  int iterations, maxIterations;  /// iterations and maxIterations ---> iterations is used with maxIterations
+                                  /// it represents whether the given number explodes, maxI. is used for telling it
+  double x, y,  /// x and y ---> represents the top left coordinate of the complex plane
+                /// (since from the first writing, I don't know that a std::complex class exists
+  sx, sy, /// sx and sy ---> this are the scaled version of the current coordinate of the canvas
+          /// to the current range, either from x to xmax, to y to ymax
+  cWidth, cHeight, /// cWidth and cHeight ---> The width and the height of the canvas, respectively.
+  xmax, ymax; /// xmax and ymax ---> represents the bottom right coordinate of the complex plane
+  mdbl_data(): i(0), j(0),
+  cx_start_thread(0), cx_end_thread(0),
+  iterations(0), maxIterations(50), 
+                                    
+  x(-2.0), y(2.0), sx(0), sy(0), cWidth(400), cHeight(400), xmax(2.0), ymax(-2.0){}
+} main_data;
 
 /// My own collections of colors (based from Ultra Fractal default colors of mandelbrot set
-rgb palleteOptimized[50] = {
+std::array<rgb, 50> palleteOptimized = {
   rgb(0, 7, 100),
   rgb(3, 15, 108),
   rgb(5, 23, 116),
@@ -153,7 +149,7 @@ sf::Event * EVENT;
 
 // split_canvas holds the most important data in the program,
 // the mandelbrot's rendering, which is saved into sf::VertexArray
-resource_t * split_canvas;
+std::unique_ptr<resource_t[]> split_canvas;
 
 
 sf::Mutex mutex;
@@ -167,7 +163,8 @@ std::atomic<int> progress(0);
 thread_pool<std::function<void(mdbl_data)>, mdbl_data> pool;
 
 // internal representation of bmpfile
-rgb * storageBMP;
+// rgb * storageBMP;
+std::unique_ptr<rgb[]> storageBMP;
 // the output bmpfile
 TinyBitmapOut bmpOutput;
 //prevent resize when programmatically size is set

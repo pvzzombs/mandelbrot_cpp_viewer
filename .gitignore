@@ -6,6 +6,10 @@ build/*.*
 bin/
 bin/*.*
 
+#Ignore lib folder and files
+lib/
+lib/*.*
+
 #sawp files from vim
 *.swp
 

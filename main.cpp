@@ -39,7 +39,7 @@ int main(int argc, char * argv[]){
   XInitThreads();
 #endif
 
-  split_canvas = new resource_t[MAX_DRAWER_THREADS.return_value()];
+  split_canvas.reset(new resource_t[MAX_DRAWER_THREADS.return_value()]);
 
   //lets check if the file config.txt is open
   if (File.is_open()) {
@@ -47,35 +47,35 @@ int main(int argc, char * argv[]){
     //read only once
     std::getline(File, parsedLine);
     //store the size
-    cWidth = atoi(parsedLine.c_str());
+    main_data.cWidth = atoi(parsedLine.c_str());
 
     std::getline(File, parsedLine);
 
-    cHeight = atoi(parsedLine.c_str());
+    main_data.cHeight = atoi(parsedLine.c_str());
     //close the File
     File.close();
   }
   //store the const first
-  cWidth = (cWidth > 2000 || cWidth < 100) ? 400 : cWidth;
-  cHeight = (cHeight > 2000 || cHeight < 100) ? 400 : cHeight;
+  main_data.cWidth = (main_data.cWidth > 2000 || main_data.cWidth < 100) ? 400 : main_data.cWidth;
+  main_data.cHeight = (main_data.cHeight > 2000 || main_data.cHeight < 100) ? 400 : main_data.cHeight;
   ///std::cout << "Width: " << cWidth << " Height: " << cHeight << "\n";
-  zoom = floor(zoomy * (cWidth / cHeight));
-  xmax = (cWidth / cHeight) > 1 ? 2.0 * (cWidth / cHeight) + 2.0 : 2.0;
+  zoom = std::floor(zoomy * (main_data.cWidth / main_data.cHeight));
+  main_data.xmax = (main_data.cWidth / main_data.cHeight) > 1 ? 2.0 * (main_data.cWidth / main_data.cHeight) + 2.0 : 2.0;
   ///std::cout << " This xmax: " << xmax << "\n";
 
-  double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
-  panX = pan * floor(cWidth / 4);
-  panY = pan * floor(cHeight / 4);
+  double pan = ((main_data.x + ((main_data.xmax - main_data.x) / main_data.cWidth) * (1 - 0)) - main_data.x);
+  panX = pan * std::floor(main_data.cWidth / 4);
+  panY = pan * std::floor(main_data.cHeight / 4);
 
   //change the size of the storage
-  storageBMP = new(std::nothrow) rgb[(unsigned int)(cWidth * cHeight)];
+  storageBMP.reset(new rgb[(unsigned int)(main_data.cWidth * main_data.cHeight)]);
 
   //operate for the storage of bmp file
-  bmpOutput.change_settings(cWidth, cHeight, "output.bmp");
+  bmpOutput.change_settings(main_data.cWidth, main_data.cHeight, "output.bmp");
 
   //create the canvas
   sf::RenderTexture canvas;
-  canvas.create(cWidth, cHeight);
+  canvas.create(main_data.cWidth, main_data.cHeight);
 
   //convert rendered texture to texture
   const sf::Texture & texture = canvas.getTexture();
@@ -84,16 +84,13 @@ int main(int argc, char * argv[]){
   sf::Sprite mandelbrot(texture);
 
   //create rendering window
-  sf::RenderWindow window(sf::VideoMode((unsigned int) cWidth, (unsigned int) cHeight), "Mandelbrot Set", sf::Style::Close);
+  sf::RenderWindow window(sf::VideoMode((unsigned int) main_data.cWidth, (unsigned int) main_data.cHeight), "Mandelbrot Set", sf::Style::Close);
 
   //set it to inactive
   window.setActive(false);
 
   //set limit of framerate for about 30-60 fps
   window.setFramerateLimit(30);
-
-  //create a pixel using rectangle shape
-  sf::RectangleShape pixel(sf::Vector2f(1, 1));
 
   //create a zoom shape (used as a magnifier)
   sf::RectangleShape zoomBox(sf::Vector2f(zoom, zoomy));
@@ -121,10 +118,7 @@ int main(int argc, char * argv[]){
   ZOOMBOX = &zoomBox;
   WINDOW = &window;
 
-  //create context
-  //sf::Context contxt;
-
-  std::thread thread_drawer(renderingThread, & window);
+  std::thread thread_drawer(renderingThread, &window);
 
   //prepare all the sprites
   prepare_canvas(MAX_DRAWER_THREADS.return_value());
@@ -134,110 +128,88 @@ int main(int argc, char * argv[]){
 
   //while window is open
   while (window.isOpen()) {
-    //check to finish drawing
-    //      if(cx < cWidth){
-    //        draw();
-    //      }
-    //inside the main while loop
     sf::Event event;
     while (window.pollEvent(event)) {
       EVENT = &event;
-      if (event.type == sf::Event::Closed) {
-        stopRenderingThreads();
-        pool.shutdown();
-        closeThreadRenderer = true;
-        thread_drawer.join();
-        delete[] split_canvas;
-        delete[] storageBMP;
-        window.close();
-      }
-
-      if (event.type == sf::Event::Resized) {
-        mdbl_evt_resize();
-      }
-
-      if (event.type == sf::Event::MouseButtonPressed) {
-        if (isThreadsWorking.load()) {
+      switch(event.type){
+        case sf::Event::Closed:
           stopRenderingThreads();
-          continue;
-        }
-
-        //left click
-        if (event.mouseButton.button == sf::Mouse::Left) {
-          mdbl_evt_mouse_lbutton_pressed();
-        }
-
-        //right click
-        if (event.mouseButton.button == sf::Mouse::Right) {
-          mdbl_evt_mouse_rbutton_pressed();
-        }
+          pool.shutdown();
+          closeThreadRenderer = true;
+          thread_drawer.join();
+          window.close();
+          break;
+        case sf::Event::Resized:
+          mdbl_evt_resize();
+          break;
+        case sf::Event::MouseButtonPressed:
+          if (isThreadsWorking.load()) {
+            stopRenderingThreads();
+            continue;
+          }
+          switch(event.mouseButton.button){
+            case sf::Mouse::Left:
+              mdbl_evt_mouse_lbutton_pressed();
+              break;
+            case sf::Mouse::Right:
+              mdbl_evt_mouse_rbutton_pressed();
+              break;
+          }
+          break;
+        case sf::Event::MouseMoved:
+          mdbl_evt_mouse_moved();
+          break;
+        case sf::Event::KeyPressed:
+          switch(event.key.code){
+            case sf::Keyboard::Left:
+              mdbl_evt_key_left_pressed();
+              break;
+            case sf::Keyboard::Right:
+              mdbl_evt_key_right_pressed();
+              break;
+            case sf::Keyboard::Down:
+              mdbl_evt_key_down_pressed();
+              break;
+            case sf::Keyboard::Up:
+              mdbl_evt_key_up_pressed();
+              break;
+            case sf::Keyboard::D:
+              mdbl_evt_key_d_pressed();
+              break;
+            case sf::Keyboard::Space:
+              mdbl_evt_key_space_pressed();
+              break;
+            case sf::Keyboard::W:
+              mdbl_evt_key_w_pressed();
+              break;
+            case sf::Keyboard::S:
+              mdbl_evt_key_s_pressed();
+              break;
+            case sf::Keyboard::Q:
+              mdbl_evt_key_q_pressed();
+              break;
+            case sf::Keyboard::A:
+              mdbl_evt_key_a_pressed();
+              break;
+            case sf::Keyboard::R:
+              mdbl_evt_key_r_pressed();
+              break;
+            case sf::Keyboard::P:
+              mdbl_evt_key_p_pressed();
+              break;
+            case sf::Keyboard::F:
+              mdbl_evt_key_f_pressed();
+              break;
+            case sf::Keyboard::I:
+              mdbl_evt_key_i_pressed();
+              break;
+            case sf::Keyboard::Enter:
+              mdbl_evt_key_enter_pressed();
+              break;
+          }
+          break;
       }
 
-      if (event.type == sf::Event::MouseMoved) {
-        mdbl_evt_mouse_moved();
-      }
-
-      if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::Left) {
-          mdbl_evt_key_left_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::Right) {
-          mdbl_evt_key_right_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::Down) {
-          mdbl_evt_key_down_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::Up) {
-          mdbl_evt_key_up_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::D) {
-          mdbl_evt_key_d_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::Space) {
-          mdbl_evt_key_space_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::W) {
-          mdbl_evt_key_w_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::S) {
-          mdbl_evt_key_s_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::Q) {
-          mdbl_evt_key_q_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::A) {
-          mdbl_evt_key_a_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::R) {
-          mdbl_evt_key_r_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::P) {
-          mdbl_evt_key_p_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::F) {
-          mdbl_evt_key_f_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::I) {
-          mdbl_evt_key_i_pressed();
-        }
-
-        if (event.key.code == sf::Keyboard::Enter) {
-          mdbl_evt_key_enter_pressed();
-        }
-      }
     }
   }
   return 0;
@@ -281,8 +253,8 @@ rgb smoothColor(int iterations_t, int maxIterations_t, double i_t, double j_t,
       ++iterations_thread;
     }
 
-    zmag = sqrt(rsquare_thread + isquare_thread);
-    index = iterations_thread + 1 - log(log(zmag)) / mlog2;
+    zmag = std::sqrt(rsquare_thread + isquare_thread);
+    index = iterations_thread + 1 - std::log(std::log(zmag)) / mlog2;
 
     return optimizedSmoothColor(index);
   } else {
@@ -364,33 +336,33 @@ void draw(const mdbl_data & data) {
   ///mutex.unlock();
 
   theThreadsDone += 1;
-  std::cout << "Done thread: " << data.i << "\n";
+  std::cout << "Done thread: " << data.i << std::endl;
 }
 
 void prepare_canvas(int numberOfThreads) {
   int i, temp;
   for (i = 0; i < numberOfThreads; i++) {
     //    split_canvas.push_back(resource_t(cWidth / numberOfThreads, cHeight));
-    temp = int(cWidth) / numberOfThreads;
-    split_canvas[i] = resource_t(temp, cHeight);
+    temp = int(main_data.cWidth) / numberOfThreads;
+    split_canvas[i] = resource_t(temp, main_data.cHeight);
   }
-  std::cout << "Canvas prepared\n";
+  std::cout << "Canvas prepared" << std::endl;
 }
 
 void thread_split(int numberOfThreads) {
-  std::cout << "Starting thread_split\n";
-  std::cout << "Max Iterations: " << maxIterations << "\n";
+  std::cout << "Starting thread_split" << std::endl;
+  std::cout << "Max Iterations: " << main_data.maxIterations << std::endl;
 
   //split them into numberOfThreads
   float cx_start_thread = 0;
   float cx_end_thread = 0;
-  int temp = int(cWidth) / numberOfThreads;
+  int temp = int(main_data.cWidth) / numberOfThreads;
   float cx_current_count = temp;
 
   int i;
   for (i = 0; i < numberOfThreads; i++) {
-    if (cx_end_thread + cx_current_count > cWidth) {
-      cx_end_thread = cWidth;
+    if (cx_end_thread + cx_current_count > main_data.cWidth) {
+      cx_end_thread = main_data.cWidth;
     } else {
       cx_end_thread += cx_current_count;
     }
@@ -399,36 +371,36 @@ void thread_split(int numberOfThreads) {
     here.i = i;
     here.cx_start_thread = cx_start_thread;
     here.cx_end_thread = cx_end_thread;
-    here.maxIterations = maxIterations;
-    here.x = x;
-    here.y = y;
-    here.sx = sx;
-    here.sy = sy;
-    here.cWidth = cWidth;
-    here.cHeight = cHeight;
-    here.xmax = xmax;
-    here.ymax = ymax;
+    here.maxIterations = main_data.maxIterations;
+    here.x = main_data.x;
+    here.y = main_data.y;
+    here.sx = main_data.sx;
+    here.sy = main_data.sy;
+    here.cWidth = main_data.cWidth;
+    here.cHeight = main_data.cHeight;
+    here.xmax = main_data.xmax;
+    here.ymax = main_data.ymax;
 
     pool.add_job(draw, here);
 
     cx_start_thread = cx_end_thread;
     //    list_of_threads.push_back(thread);
-    std::cout << "Launching thread: " << i << "\n";
+    std::cout << "Launching thread: " << i << std::endl;
     //    thread.launch();
     ///thread.wait();
   }
   isThreadsWorking = true;
 
-  std::cout << "All threads launched\n";
+  std::cout << "All threads launched" << std::endl;
 }
 
 void renderingThread(sf::RenderWindow * window) {
   sf::Context ctx;
   int max_cpu_drawer = MAX_DRAWER_THREADS.return_value();
-  std::cout << "Number of CPU Cores: " << std::thread::hardware_concurrency() << "\n";
-  std::cout << "Number of Drawing Threads: " << max_cpu_drawer << "\n";
+  std::cout << "Number of CPU Cores: " << std::thread::hardware_concurrency() << std::endl;
+  std::cout << "Number of Drawing Threads: " << max_cpu_drawer << std::endl;
   if (!window -> isOpen()) {
-    std::cout << "Error\n";
+    std::cout << "Error" << std::endl;
     return;
   }
   while (!closeThreadRenderer.load()) {
@@ -447,7 +419,7 @@ void renderingThread(sf::RenderWindow * window) {
       stopRenderingThreads();
     }
   }
-  std::cout << "Exiting Rendering Thread..\n";
+  std::cout << "Exiting Rendering Thread.." << std::endl;
   window -> setActive(false);
 }
 
@@ -470,63 +442,63 @@ void zoomIn() {
   double mx = (double) mousex;
   double my = (double) mousey;
 
-  double nx = x + (mx / cWidth) * (xmax - x);
-  double nxmax = x + ((mx + zoom) / cWidth) * (xmax - x);
+  double nx = main_data.x + (mx / main_data.cWidth) * (main_data.xmax - main_data.x);
+  double nxmax = main_data.x + ((mx + zoom) / main_data.cWidth) * (main_data.xmax - main_data.x);
 
-  x = nx;
-  xmax = nxmax;
+  main_data.x = nx;
+  main_data.xmax = nxmax;
 
-  double ny = y + (my / cHeight) * (ymax - y);
-  double nymax = y + ((my + zoomy) / cHeight) * (ymax - y);
+  double ny = main_data.y + (my / main_data.cHeight) * (main_data.ymax - main_data.y);
+  double nymax = main_data.y + ((my + zoomy) / main_data.cHeight) * (main_data.ymax - main_data.y);
 
-  y = ny;
-  ymax = nymax;
+  main_data.y = ny;
+  main_data.ymax = nymax;
 
-  maxIterations += 50;
+  main_data.maxIterations += 50;
   cx = 0;
   ticks = 0;
 
-  double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
-  panX = pan * floor(cWidth / 4);
-  panY = pan * floor(cHeight / 4);
+  double pan = ((main_data.x + ((main_data.xmax - main_data.x) / main_data.cWidth) * (1 - 0)) - main_data.x);
+  panX = pan * std::floor(main_data.cWidth / 4);
+  panY = pan * std::floor(main_data.cHeight / 4);
 }
 
 void zoomOut() {
   double mx = (double) mousex;
   double my = (double) mousey;
 
-  double fx0 = x + (0 / zoom) * (xmax - x);
-  double fx1 = x + (1 / zoom) * (xmax - x);
+  double fx0 = main_data.x + (0 / zoom) * (main_data.xmax - main_data.x);
+  double fx1 = main_data.x + (1 / zoom) * (main_data.xmax - main_data.x);
 
   double dx = (fx1) - (fx0);
 
-  double fy0 = y + (0 / zoomy) * (ymax - y);
-  double fy1 = y + (1 / zoomy) * (ymax - y);
+  double fy0 = main_data.y + (0 / zoomy) * (main_data.ymax - main_data.y);
+  double fy1 = main_data.y + (1 / zoomy) * (main_data.ymax - main_data.y);
 
   double dy = (fy1) - (fy0);
 
-  x = x - (mx * dx);
-  y = y - (my * dy);
+  main_data.x = main_data.x - (mx * dx);
+  main_data.y = main_data.y - (my * dy);
 
-  double xback = cWidth - (mx + zoom);
-  double yback = cHeight - (my + zoomy);
+  double xback = main_data.cWidth - (mx + zoom);
+  double yback = main_data.cHeight - (my + zoomy);
 
-  xmax = xmax + (xback * dx);
-  ymax = ymax + (yback * dy);
+  main_data.xmax = main_data.xmax + (xback * dx);
+  main_data.ymax = main_data.ymax + (yback * dy);
 
-  maxIterations -= 50;
+  main_data.maxIterations -= 50;
   cx = 0;
   ticks = 0;
 
-  double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
-  panX = pan * floor(cWidth / 4);
-  panY = pan * floor(cHeight / 4);
+  double pan = ((main_data.x + ((main_data.xmax - main_data.x) / main_data.cWidth) * (1 - 0)) - main_data.x);
+  panX = pan * std::floor(main_data.cWidth / 4);
+  panY = pan * std::floor(main_data.cHeight / 4);
 }
 
 void mdbl_evt_resize(){
   if (!ignoreResize) {
     ignoreResize = true;
-    WINDOW->setSize(sf::Vector2u(cWidth, cHeight));
+    WINDOW->setSize(sf::Vector2u(main_data.cWidth, main_data.cHeight));
   } else {
     ignoreResize = false;
   }
@@ -555,8 +527,8 @@ void mdbl_evt_key_left_pressed(){
     stopRenderingThreads();
   }
 
-  x -= panX;
-  xmax -= panX;
+  main_data.x -= panX;
+  main_data.xmax -= panX;
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
@@ -565,8 +537,8 @@ void mdbl_evt_key_right_pressed(){
     stopRenderingThreads();
   }
 
-  x += panX;
-  xmax += panX;
+  main_data.x += panX;
+  main_data.xmax += panX;
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
@@ -575,8 +547,8 @@ void mdbl_evt_key_down_pressed(){
     stopRenderingThreads();
   }
 
-  y -= panY;
-  ymax -= panY;
+  main_data.y -= panY;
+  main_data.ymax -= panY;
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
@@ -585,8 +557,8 @@ void mdbl_evt_key_up_pressed(){
     stopRenderingThreads();
   }
 
-  y += panY;
-  ymax += panY;
+  main_data.y += panY;
+  main_data.ymax += panY;
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
@@ -595,7 +567,7 @@ void mdbl_evt_key_w_pressed(){
     stopRenderingThreads();
   }
 
-  maxIterations += 50;
+  main_data.maxIterations += 50;
   cx = 0;
   ticks = 0;
   thread_split(MAX_DRAWER_THREADS.return_value());
@@ -606,7 +578,7 @@ void mdbl_evt_key_s_pressed(){
     stopRenderingThreads();
   }
 
-  maxIterations -= 50;
+  main_data.maxIterations -= 50;
   cx = 0;
   ticks = 0;
   thread_split(MAX_DRAWER_THREADS.return_value());
@@ -617,9 +589,9 @@ void mdbl_evt_key_d_pressed(){
 }
 
 void mdbl_evt_key_q_pressed(){
-  if (zoomy + 20 < cHeight) {
+  if (zoomy + 20 < main_data.cHeight) {
     zoomy += 20;
-    zoom = floor(zoomy * (cWidth / cHeight));
+    zoom = std::floor(zoomy * (main_data.cWidth / main_data.cHeight));
   }
   ZOOMBOX->setSize(sf::Vector2f(zoom, zoomy));
 }
@@ -627,7 +599,7 @@ void mdbl_evt_key_q_pressed(){
 void mdbl_evt_key_a_pressed(){
   if (zoomy - 20 > 0) {
     zoomy -= 20;
-    zoom = floor(zoomy * (cWidth / cHeight));
+    zoom = std::floor(zoomy * (main_data.cWidth / main_data.cHeight));
   }
   ZOOMBOX->setSize(sf::Vector2f(zoom, zoomy));
 }
@@ -637,16 +609,16 @@ void mdbl_evt_key_r_pressed(){
     stopRenderingThreads();
   }
   zoomy = 100;
-  zoom = floor(zoomy * (cWidth / cHeight));
-  x = -2.0;
-  y = 2.0;
-  xmax = (cWidth / cHeight) > 1 ? 2.0 * (cWidth / cHeight) + 2.0 : 2.0;
-  ymax = -2.0;
-  double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
-  panX = pan * floor(cWidth / 4);
-  panY = pan * floor(cHeight / 4);
-  iterations = 0;
-  maxIterations = 50;
+  zoom = std::floor(zoomy * (main_data.cWidth / main_data.cHeight));
+  main_data.x = -2.0;
+  main_data.y = 2.0;
+  main_data.xmax = (main_data.cWidth / main_data.cHeight) > 1 ? 2.0 * (main_data.cWidth / main_data.cHeight) + 2.0 : 2.0;
+  main_data.ymax = -2.0;
+  double pan = ((main_data.x + ((main_data.xmax - main_data.x) / main_data.cWidth) * (1 - 0)) - main_data.x);
+  panX = pan * std::floor(main_data.cWidth / 4);
+  panY = pan * std::floor(main_data.cHeight / 4);
+  main_data.iterations = 0;
+  main_data.maxIterations = 50;
   cx = 0;
   ticks = 0;
   ZOOMBOX->setSize(sf::Vector2f(zoom, zoomy));
@@ -678,7 +650,7 @@ void mdbl_evt_key_i_pressed(){
 }
 
 void mdbl_evt_key_enter_pressed(){
-  bmpOutput.write_data(storageBMP);
+  bmpOutput.write_data(storageBMP.get());
   ///bmpOutput.flip_data_horizontal();
   bmpOutput.save_data();
 }
@@ -688,30 +660,30 @@ void mdbl_evt_key_space_pressed(){
     stopRenderingThreads();
   }
 
-  double mx = floor(cWidth * 1 / 8);
-  double my = floor(cHeight * 1 / 8);
+  double mx = std::floor(main_data.cWidth * 1 / 8);
+  double my = std::floor(main_data.cHeight * 1 / 8);
 
-  double nx = x + (mx / cWidth) * (xmax - x);
-  double nxmax = x + ((cWidth - mx) / cWidth) * (xmax - x);
+  double nx = main_data.x + (mx / main_data.cWidth) * (main_data.xmax - main_data.x);
+  double nxmax = main_data.x + ((main_data.cWidth - mx) / main_data.cWidth) * (main_data.xmax - main_data.x);
 
   ///std::cout << "Here: " << nx << " " << nxmax << "\n";
   ///std::cout << "Here: " << mx << " " << cWidth - mx << "\n";
 
-  x = nx;
-  xmax = nxmax;
+  main_data.x = nx;
+  main_data.xmax = nxmax;
 
-  double ny = y + (my / cHeight) * (ymax - y);
-  double nymax = y + ((cHeight - my) / cHeight) * (ymax - y);
+  double ny = main_data.y + (my / main_data.cHeight) * (main_data.ymax - main_data.y);
+  double nymax = main_data.y + ((main_data.cHeight - my) / main_data.cHeight) * (main_data.ymax - main_data.y);
 
-  y = ny;
-  ymax = nymax;
+  main_data.y = ny;
+  main_data.ymax = nymax;
 
-  maxIterations += 50;
+  main_data.maxIterations += 50;
   cx = 0;
   ticks = 0;
 
-  double pan = ((x + ((xmax - x) / cWidth) * (1 - 0)) - x);
-  panX = pan * floor(cWidth / 4);
-  panY = pan * floor(cHeight / 4);
+  double pan = ((main_data.x + ((main_data.xmax - main_data.x) / main_data.cWidth) * (1 - 0)) - main_data.x);
+  panX = pan * std::floor(main_data.cWidth / 4);
+  panY = pan * std::floor(main_data.cHeight / 4);
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
