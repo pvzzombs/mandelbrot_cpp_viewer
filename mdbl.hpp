@@ -31,6 +31,7 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <array>
 #include <vector>
 #include <functional>
 #include <SFML/Graphics.hpp>
