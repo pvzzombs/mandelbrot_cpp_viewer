@@ -190,7 +190,6 @@ void zoomIn();
 void zoomOut();
 void stopRenderingThreads();
 
-void mdbl_switch_keys();
 void mdbl_evt_resize();
 void mdbl_evt_mouse_lbutton_pressed();
 void mdbl_evt_mouse_rbutton_pressed();

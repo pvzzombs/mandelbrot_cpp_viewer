@@ -68,7 +68,7 @@ int main(int argc, char * argv[]){
           mdbl_evt_mouse_moved();
           break;
         case sf::Event::KeyPressed:
-          mdbl_switch_keys();
+          main_init_.switch_keys();
           break;
       }
     }
@@ -354,56 +354,6 @@ void zoomOut() {
   double pan = ((main_data.x + ((main_data.xmax - main_data.x) / main_data.cWidth) * (1 - 0)) - main_data.x);
   panX = pan * std::floor(main_data.cWidth / 4);
   panY = pan * std::floor(main_data.cHeight / 4);
-}
-
-void mdbl_switch_keys(){
-  switch(EVENT->key.code){
-    case sf::Keyboard::Left:
-      mdbl_evt_key_left_pressed();
-      break;
-    case sf::Keyboard::Right:
-      mdbl_evt_key_right_pressed();
-      break;
-    case sf::Keyboard::Down:
-      mdbl_evt_key_down_pressed();
-      break;
-    case sf::Keyboard::Up:
-      mdbl_evt_key_up_pressed();
-      break;
-    case sf::Keyboard::D:
-      mdbl_evt_key_d_pressed();
-      break;
-    case sf::Keyboard::Space:
-      mdbl_evt_key_space_pressed();
-      break;
-    case sf::Keyboard::W:
-      mdbl_evt_key_w_pressed();
-      break;
-    case sf::Keyboard::S:
-      mdbl_evt_key_s_pressed();
-      break;
-    case sf::Keyboard::Q:
-      mdbl_evt_key_q_pressed();
-      break;
-    case sf::Keyboard::A:
-      mdbl_evt_key_a_pressed();
-      break;
-    case sf::Keyboard::R:
-      mdbl_evt_key_r_pressed();
-      break;
-    case sf::Keyboard::P:
-      mdbl_evt_key_p_pressed();
-      break;
-    case sf::Keyboard::F:
-      mdbl_evt_key_f_pressed();
-      break;
-    case sf::Keyboard::I:
-      mdbl_evt_key_i_pressed();
-      break;
-    case sf::Keyboard::Enter:
-      mdbl_evt_key_enter_pressed();
-      break;
-  }
 }
 
 void mdbl_evt_resize(){
