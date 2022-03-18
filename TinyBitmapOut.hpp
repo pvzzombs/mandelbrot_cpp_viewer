@@ -62,6 +62,8 @@ class TinyBitmapOut {
     unsigned int width;
     unsigned int height;
     std::string path_to_file;
+    void init(unsigned int w, unsigned int h, std::string path);
+    void save(std::string path);
 
 public:
 ////////////////////////////////////////////////////////////

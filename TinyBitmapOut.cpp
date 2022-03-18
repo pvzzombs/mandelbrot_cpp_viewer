@@ -52,16 +52,7 @@ rgb::rgb (int w, int q, int c, int d){
     a = d;
 }
 
-TinyBitmapOut::TinyBitmapOut (){
-  width = 0;
-  height = 0;
-  path_to_file = "";
-  area = 0;
-  data = nullptr;
-  is_data = false;
-}
-
-TinyBitmapOut::TinyBitmapOut (unsigned int w, unsigned int h, std::string path){
+void TinyBitmapOut::init (unsigned int w, unsigned int h, std::string path){
   width = w;
   height = h;
   path_to_file = path;
@@ -75,6 +66,19 @@ TinyBitmapOut::TinyBitmapOut (unsigned int w, unsigned int h, std::string path){
   }else{
     is_data = true;
   }
+}
+
+TinyBitmapOut::TinyBitmapOut (){
+  width = 0;
+  height = 0;
+  path_to_file = "";
+  area = 0;
+  data = nullptr;
+  is_data = false;
+}
+
+TinyBitmapOut::TinyBitmapOut (unsigned int w, unsigned int h, std::string path){
+  init(w, h, path);
 }
 
 TinyBitmapOut::~TinyBitmapOut (){
@@ -88,19 +92,7 @@ void TinyBitmapOut::change_settings (unsigned int w, unsigned int h, std::string
   if(is_data){
     delete [] data;
   }
-  width = w;
-  height = h;
-  path_to_file = path;
-  area = w*h;
-  data = new (std::nothrow) int[area];
-  if(data == 0){
-    width = 0;
-    height = 0;
-    area = 0;
-    is_data = false;
-  }else{
-    is_data = true;
-  }
+  init(w, h, path);
 }
 
 void TinyBitmapOut::write_data (int * DATA){
@@ -172,60 +164,42 @@ void TinyBitmapOut::flip_data_vertical (){
   }
 }
 
+void TinyBitmapOut::save (std::string path){
+  const int pad=(4-(3*width)%4)%4, filesize=54+(3*width+pad)*height; // horizontal line must be a multiple of 4 bytes long, header is 54 bytes
+  char header[54] = { 'B','M', 0,0,0,0, 0,0,0,0, 54,0,0,0, 40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,24,0 };
+  char padding[3] = { 0,0,0 };
+  for(int i=0; i<4; i++) {
+    header[ 2+i] = (unsigned char)((filesize>>(8*i))&255);
+    header[18+i] = (unsigned char)((width   >>(8*i))&255);
+    header[22+i] = (unsigned char)((height  >>(8*i))&255);
+  }
+  unsigned char* img = new unsigned char[3*area];
+  for(int i=0; i<area; i++) {
+    const int color = data[i];
+    img[3*i  ] = (unsigned char)( color     &255);
+    img[3*i+1] = (unsigned char)((color>> 8)&255);
+    img[3*i+2] = (unsigned char)((color>>16)&255);
+  }
+  std::ofstream file(path.c_str(), std::ios::out|std::ios::binary);
+  file.write(header, 54);
+  for(int i=height-1; i>=0; i--) {
+    file.write((char*)(img+3*width*i), 3*width);
+    file.write(padding, pad);
+  }
+  file.close();
+  delete[] img;
+}
+
 void TinyBitmapOut::save_data (){
   if(is_data){
-    const int pad=(4-(3*width)%4)%4, filesize=54+(3*width+pad)*height; // horizontal line must be a multiple of 4 bytes long, header is 54 bytes
-    char header[54] = { 'B','M', 0,0,0,0, 0,0,0,0, 54,0,0,0, 40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,24,0 };
-    char padding[3] = { 0,0,0 };
-    for(int i=0; i<4; i++) {
-      header[ 2+i] = (unsigned char)((filesize>>(8*i))&255);
-      header[18+i] = (unsigned char)((width   >>(8*i))&255);
-      header[22+i] = (unsigned char)((height  >>(8*i))&255);
-    }
-    unsigned char* img = new unsigned char[3*area];
-    for(int i=0; i<area; i++) {
-      const int color = data[i];
-      img[3*i  ] = (unsigned char)( color     &255);
-      img[3*i+1] = (unsigned char)((color>> 8)&255);
-      img[3*i+2] = (unsigned char)((color>>16)&255);
-    }
-    std::ofstream file(path_to_file.c_str(), std::ios::out|std::ios::binary);
-    file.write(header, 54);
-    for(int i=height-1; i>=0; i--) {
-      file.write((char*)(img+3*width*i), 3*width);
-      file.write(padding, pad);
-    }
-    file.close();
-    delete[] img;
+    save(path_to_file);
   }
 }
 
 void TinyBitmapOut::save_data (std::string path){
   if(is_data){
     path_to_file = path;
-    const int pad=(4-(3*width)%4)%4, filesize=54+(3*width+pad)*height; // horizontal line must be a multiple of 4 bytes long, header is 54 bytes
-    char header[54] = { 'B','M', 0,0,0,0, 0,0,0,0, 54,0,0,0, 40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,24,0 };
-    char padding[3] = { 0,0,0 };
-    for(int i=0; i<4; i++) {
-      header[ 2+i] = (unsigned char)((filesize>>(8*i))&255);
-      header[18+i] = (unsigned char)((width   >>(8*i))&255);
-      header[22+i] = (unsigned char)((height  >>(8*i))&255);
-    }
-    unsigned char* img = new unsigned char[3*area];
-    for(int i=0; i<area; i++) {
-      const int color = data[i];
-      img[3*i  ] = (unsigned char)( color     &255);
-      img[3*i+1] = (unsigned char)((color>> 8)&255);
-      img[3*i+2] = (unsigned char)((color>>16)&255);
-    }
-    std::ofstream file(path_to_file.c_str(), std::ios::out|std::ios::binary);
-    file.write(header, 54);
-    for(int i=height-1; i>=0; i--) {
-      file.write((char*)(img+3*width*i), 3*width);
-      file.write(padding, pad);
-    }
-    file.close();
-    delete[] img;
+    save(path_to_file);
   }
 }
 

@@ -81,8 +81,7 @@ struct mdbl_data {
   xmax, ymax; /// xmax and ymax ---> represents the bottom right coordinate of the complex plane
   mdbl_data(): i(0), j(0),
   cx_start_thread(0), cx_end_thread(0),
-  iterations(0), maxIterations(50), 
-                                    
+  iterations(0), maxIterations(50),
   x(-2.0), y(2.0), sx(0), sy(0), cWidth(400), cHeight(400), xmax(2.0), ymax(-2.0){}
 } main_data;
 
@@ -164,7 +163,6 @@ std::atomic<int> progress(0);
 thread_pool<std::function<void(mdbl_data)>, mdbl_data> pool;
 
 // internal representation of bmpfile
-// rgb * storageBMP;
 std::unique_ptr<rgb[]> storageBMP;
 // the output bmpfile
 TinyBitmapOut bmpOutput;
@@ -192,6 +190,7 @@ void zoomIn();
 void zoomOut();
 void stopRenderingThreads();
 
+void mdbl_switch_keys();
 void mdbl_evt_resize();
 void mdbl_evt_mouse_lbutton_pressed();
 void mdbl_evt_mouse_rbutton_pressed();
