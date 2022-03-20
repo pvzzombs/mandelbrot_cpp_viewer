@@ -205,7 +205,7 @@ void prepare_canvas(int numberOfThreads) {
   for (i = 0; i < numberOfThreads; i++) {
     //    split_canvas.push_back(resource_t(cWidth / numberOfThreads, cHeight));
     temp = int(main_data.cWidth) / numberOfThreads;
-    split_canvas[i] = resource_t(temp, main_data.cHeight);
+    split_canvas[i] = resource_t(temp, static_cast<unsigned int>(main_data.cHeight));
   }
   std::cout << "Canvas prepared" << std::endl;
 }
@@ -218,12 +218,12 @@ void thread_split(int numberOfThreads) {
   float cx_start_thread = 0;
   float cx_end_thread = 0;
   int temp = int(main_data.cWidth) / numberOfThreads;
-  float cx_current_count = temp;
+  float cx_current_count = static_cast<float>(temp);
 
   int i;
   for (i = 0; i < numberOfThreads; i++) {
     if (cx_end_thread + cx_current_count > main_data.cWidth) {
-      cx_end_thread = main_data.cWidth;
+      cx_end_thread = static_cast<float>(main_data.cWidth);
     } else {
       cx_end_thread += cx_current_count;
     }
@@ -359,7 +359,7 @@ void zoomOut() {
 inline void mdbl_evt_resize(){
   if (!ignoreResize) {
     ignoreResize = true;
-    WINDOW->setSize(sf::Vector2u(main_data.cWidth, main_data.cHeight));
+    WINDOW->setSize(sf::Vector2u(static_cast<unsigned int>(main_data.cWidth), static_cast<unsigned int>(main_data.cHeight)));
   } else {
     ignoreResize = false;
   }

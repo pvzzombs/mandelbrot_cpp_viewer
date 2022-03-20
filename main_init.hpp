@@ -67,7 +67,7 @@ public:
     storageBMP.reset(new rgb[(unsigned int)(main_data.cWidth * main_data.cHeight)]);
 
     //operate for the storage of bmp file
-    bmpOutput.change_settings(main_data.cWidth, main_data.cHeight, "output.bmp");
+    bmpOutput.change_settings(static_cast<unsigned int>(main_data.cWidth), static_cast<unsigned int>(main_data.cHeight), "output.bmp");
 
     //adjust rendering window
     window.create(sf::VideoMode((unsigned int)main_data.cWidth, (unsigned int) main_data.cHeight), "Mandelbrot Set", sf::Style::Close);
