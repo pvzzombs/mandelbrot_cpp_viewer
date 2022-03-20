@@ -76,7 +76,7 @@ int main(int argc, char * argv[]){
   return 0;
 }
 
-rgb optimizedSmoothColor(double mu) {
+inline rgb optimizedSmoothColor(double mu) {
   int clr1 = (int) mu;
   double t2 = mu - clr1;
   double t1 = 1 - t2;
@@ -94,7 +94,7 @@ rgb optimizedSmoothColor(double mu) {
   return rgb(r, g, b);
 }
 
-rgb smoothColor(int iterations_t, int maxIterations_t, double i_t, double j_t,
+inline rgb smoothColor(int iterations_t, int maxIterations_t, double i_t, double j_t,
   double rsquare_t, double isquare_t, double zsquare_t, double sx_t, double sy_t) {
   rgb secret;
   int ii;
@@ -184,7 +184,7 @@ void draw(const mdbl_data & data) {
       //std::cout << goodColor_thread.r << " " << goodColor_thread.g << " " << goodColor_thread.b << "\n";
       ///mutex.lock();
       rt_array[split_canvas[data.i].index][vertex_pos].color = sf::Color(goodColor_thread.r, goodColor_thread.g, goodColor_thread.b);
-      rt_array[split_canvas[data.i].index][vertex_pos].position = sf::Vector2f(cx_thread, cy_thread);
+      rt_array[split_canvas[data.i].index][vertex_pos].position = sf::Vector2f(static_cast<float>(cx_thread), static_cast<float>(cy_thread));
       ++vertex_pos;
       ///mutex.unlock();
       //std::cout << i << j << "\n";
@@ -356,7 +356,7 @@ void zoomOut() {
   panY = pan * std::floor(main_data.cHeight / 4);
 }
 
-void mdbl_evt_resize(){
+inline void mdbl_evt_resize(){
   if (!ignoreResize) {
     ignoreResize = true;
     WINDOW->setSize(sf::Vector2u(main_data.cWidth, main_data.cHeight));
@@ -365,25 +365,25 @@ void mdbl_evt_resize(){
   }
 }
 
-void mdbl_evt_mouse_lbutton_pressed(){
+inline void mdbl_evt_mouse_lbutton_pressed(){
   mousex = EVENT->mouseButton.x;
   mousey = EVENT->mouseButton.y;
   zoomIn();
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
-void mdbl_evt_mouse_rbutton_pressed(){
+inline void mdbl_evt_mouse_rbutton_pressed(){
   mousex = EVENT->mouseButton.x;
   mousey = EVENT->mouseButton.y;
   zoomOut();
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
-void mdbl_evt_mouse_moved(){
+inline void mdbl_evt_mouse_moved(){
   ZOOMBOX->setPosition(float(EVENT->mouseMove.x), float(EVENT->mouseMove.y));
 }
 
-void mdbl_evt_key_left_pressed(){
+inline void mdbl_evt_key_left_pressed(){
   if (isThreadsWorking.load()) {
     stopRenderingThreads();
   }
@@ -393,7 +393,7 @@ void mdbl_evt_key_left_pressed(){
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
-void mdbl_evt_key_right_pressed(){
+inline void mdbl_evt_key_right_pressed(){
   if (isThreadsWorking.load()) {
     stopRenderingThreads();
   }
@@ -403,7 +403,7 @@ void mdbl_evt_key_right_pressed(){
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
-void mdbl_evt_key_down_pressed(){
+inline void mdbl_evt_key_down_pressed(){
   if (isThreadsWorking.load()) {
     stopRenderingThreads();
   }
@@ -413,7 +413,7 @@ void mdbl_evt_key_down_pressed(){
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
-void mdbl_evt_key_up_pressed(){
+inline void mdbl_evt_key_up_pressed(){
   if (isThreadsWorking.load()) {
     stopRenderingThreads();
   }
@@ -423,7 +423,7 @@ void mdbl_evt_key_up_pressed(){
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
-void mdbl_evt_key_w_pressed(){
+inline void mdbl_evt_key_w_pressed(){
   if (isThreadsWorking.load()) {
     stopRenderingThreads();
   }
@@ -434,7 +434,7 @@ void mdbl_evt_key_w_pressed(){
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
-void mdbl_evt_key_s_pressed(){
+inline void mdbl_evt_key_s_pressed(){
   if (isThreadsWorking.load()) {
     stopRenderingThreads();
   }
@@ -445,27 +445,27 @@ void mdbl_evt_key_s_pressed(){
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
-void mdbl_evt_key_d_pressed(){
+inline void mdbl_evt_key_d_pressed(){
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
-void mdbl_evt_key_q_pressed(){
+inline void mdbl_evt_key_q_pressed(){
   if (zoomy + 20 < main_data.cHeight) {
     zoomy += 20;
     zoom = std::floor(zoomy * (main_data.cWidth / main_data.cHeight));
   }
-  ZOOMBOX->setSize(sf::Vector2f(zoom, zoomy));
+  ZOOMBOX->setSize(sf::Vector2f(static_cast<float>(zoom), static_cast<float>(zoomy)));
 }
 
-void mdbl_evt_key_a_pressed(){
+inline void mdbl_evt_key_a_pressed(){
   if (zoomy - 20 > 0) {
     zoomy -= 20;
     zoom = std::floor(zoomy * (main_data.cWidth / main_data.cHeight));
   }
-  ZOOMBOX->setSize(sf::Vector2f(zoom, zoomy));
+  ZOOMBOX->setSize(sf::Vector2f(static_cast<float>(zoom), static_cast<float>(zoomy)));
 }
 
-void mdbl_evt_key_r_pressed(){
+inline void mdbl_evt_key_r_pressed(){
   if (isThreadsWorking.load()) {
     stopRenderingThreads();
   }
@@ -482,11 +482,11 @@ void mdbl_evt_key_r_pressed(){
   main_data.maxIterations = 50;
   cx = 0;
   ticks = 0;
-  ZOOMBOX->setSize(sf::Vector2f(zoom, zoomy));
+  ZOOMBOX->setSize(sf::Vector2f(static_cast<float>(zoom), static_cast<float>(zoomy)));
   thread_split(MAX_DRAWER_THREADS.return_value());
 }
 
-void mdbl_evt_key_p_pressed(){
+inline void mdbl_evt_key_p_pressed(){
   if (isPaused) {
     isPaused = false;
     WINDOW->setFramerateLimit(30);
@@ -496,27 +496,27 @@ void mdbl_evt_key_p_pressed(){
   }
 }
 
-void mdbl_evt_key_f_pressed(){
+inline void mdbl_evt_key_f_pressed(){
   if (!isPaused) {
     isPaused = false;
     WINDOW->setFramerateLimit(0);
   }
 }
 
-void mdbl_evt_key_i_pressed(){
+inline void mdbl_evt_key_i_pressed(){
   if (showText)
     showText = false;
   else
     showText = true;
 }
 
-void mdbl_evt_key_enter_pressed(){
+inline void mdbl_evt_key_enter_pressed(){
   bmpOutput.write_data(storageBMP.get());
   ///bmpOutput.flip_data_horizontal();
   bmpOutput.save_data();
 }
 
-void mdbl_evt_key_space_pressed(){
+inline void mdbl_evt_key_space_pressed(){
   if (isThreadsWorking.load()) {
     stopRenderingThreads();
   }

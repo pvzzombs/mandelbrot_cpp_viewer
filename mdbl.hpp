@@ -177,8 +177,8 @@ bool showText = true;
 std::ifstream File("config.txt");
 
 /// The functions and utilities
-rgb optimizedSmoothColor(double mu);
-rgb smoothColor(int iterations_t, int maxIterations_t, double i_t, double j_t,
+inline rgb optimizedSmoothColor(double mu);
+inline rgb smoothColor(int iterations_t, int maxIterations_t, double i_t, double j_t,
   double rsquare_t, double isquare_t, double zsquare_t, double sx_t, double sy_t);
 
 void draw(const mdbl_data&);
@@ -190,24 +190,24 @@ void zoomIn();
 void zoomOut();
 void stopRenderingThreads();
 
-void mdbl_evt_resize();
-void mdbl_evt_mouse_lbutton_pressed();
-void mdbl_evt_mouse_rbutton_pressed();
-void mdbl_evt_mouse_moved();
-void mdbl_evt_key_left_pressed();
-void mdbl_evt_key_right_pressed();
-void mdbl_evt_key_down_pressed();
-void mdbl_evt_key_up_pressed();
-void mdbl_evt_key_w_pressed();
-void mdbl_evt_key_s_pressed();
-void mdbl_evt_key_d_pressed();
-void mdbl_evt_key_q_pressed();
-void mdbl_evt_key_a_pressed();
-void mdbl_evt_key_r_pressed();
-void mdbl_evt_key_p_pressed();
-void mdbl_evt_key_f_pressed();
-void mdbl_evt_key_i_pressed();
-void mdbl_evt_key_enter_pressed();
-void mdbl_evt_key_space_pressed();
+inline void mdbl_evt_resize();
+inline void mdbl_evt_mouse_lbutton_pressed();
+inline void mdbl_evt_mouse_rbutton_pressed();
+inline void mdbl_evt_mouse_moved();
+inline void mdbl_evt_key_left_pressed();
+inline void mdbl_evt_key_right_pressed();
+inline void mdbl_evt_key_down_pressed();
+inline void mdbl_evt_key_up_pressed();
+inline void mdbl_evt_key_w_pressed();
+inline void mdbl_evt_key_s_pressed();
+inline void mdbl_evt_key_d_pressed();
+inline void mdbl_evt_key_q_pressed();
+inline void mdbl_evt_key_a_pressed();
+inline void mdbl_evt_key_r_pressed();
+inline void mdbl_evt_key_p_pressed();
+inline void mdbl_evt_key_f_pressed();
+inline void mdbl_evt_key_i_pressed();
+inline void mdbl_evt_key_enter_pressed();
+inline void mdbl_evt_key_space_pressed();
 
 #endif

@@ -30,8 +30,9 @@ public:
   main_init():
     determiner_of_cpu_cores(std::thread::hardware_concurrency()),
     window(),
-    zoomBox(sf::Vector2f(zoom, zoomy)),
-    text() {
+    zoomBox(sf::Vector2f(static_cast<float>(zoom), static_cast<float>(zoomy))),
+    text(),
+    thread_drawer() {
     //get the number of CPU CORES
     MAX_DRAWER_THREADS = (determiner_of_cpu_cores < 1) ? 1 : determiner_of_cpu_cores;
 
@@ -102,8 +103,7 @@ public:
     WINDOW = &window;
 
     //move rendering thread
-    std::thread thread_drawer_(renderingThread, &window);
-    thread_drawer = std::move(thread_drawer_);
+    thread_drawer = std::thread(renderingThread, &window);
 
     //prepare all the sprites
     prepare_canvas(MAX_DRAWER_THREADS.return_value());
@@ -120,7 +120,7 @@ public:
     window.close();
   }
 
-  void switch_keys(){
+  inline void switch_keys(){
     switch(EVENT->key.code){
       case sf::Keyboard::Left:
         mdbl_evt_key_left_pressed();
