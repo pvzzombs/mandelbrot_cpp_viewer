@@ -31,37 +31,12 @@ else()
   endif()
 endif(WIN32)
 
-# Generate config.h
-#configure_file(config.h.in config.h)
-
-# Set SFML_DIR search path, you can set this option 
-# configuring cmake
-# if(WIN32)
-#   set(SFML_DIR "SFML\\build\\" CACHE FILE_PATH "SFML\\build\\" FORCE)
-# else()
-#   set(SFML_DIR "SFML/build/" CACHE FILE_PATH "SFML/build/" FORCE)
-# endif(WIN32)
-
-
-# Find SFML shared libraries
-#find_package(SFML 2.5.1 
-#  COMPONENTS 
-#    system window graphics network audio REQUIRED
-#  )
-
-# Only for LINK_MANDELBROT_STATIC
-#if(LINK_MANDELBROT_STATIC)
-#  include_directories("include")
-#  link_directories("lib")
-#  MESSAGE("-- Static build detected")
-#endif(LINK_MANDELBROT_STATIC)
-
 # SFML version
 set(SFML_VERSION_AB 2.5)
 set(SFML_VERSION_ABX 2.5.1)
 
 # Executables to be compiled
-add_executable(Mandelbrot ${MSVC_PATCH}  main.cpp TinyBitmapOut.cpp)
+add_executable(Mandelbrot ${MSVC_PATCH}  src/main.cpp src/TinyBitmapOut.cpp)
 add_executable(Test ${MSVC_PATCH} test/test.cpp)
 
 # Set include directory search paths
