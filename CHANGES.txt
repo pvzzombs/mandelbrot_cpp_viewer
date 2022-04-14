@@ -2,3 +2,5 @@
 * Initial release.
 1.1.0.0
 * Multithreading support
+1.2.4.0
+* GNU LGPL v2.1 -> GNU LGPL v3.0

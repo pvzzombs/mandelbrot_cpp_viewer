@@ -6,4 +6,4 @@ To change the size of the window, go to folder of the program
 
 --------------------------------------------------------------------------
 
-This program is released under the GNU Lesser General Public License.
+This program is released under the GNU Lesser General Public License v3.0
